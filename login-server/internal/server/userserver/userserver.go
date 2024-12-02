@@ -2,6 +2,7 @@ package userserver
 
 import (
 	"context"
+	"login-server/internal/constant"
 	"login-server/internal/ecode"
 	"login-server/internal/svc"
 	"login-server/internal/types"
@@ -30,12 +31,16 @@ func (s *UserServer) Login(req *types.LoginReq, ip string) types.Response {
 		return types.Error(ecode.ErrPassWordError)
 	}
 	// TODO 将token存入redis
-
-	token, err := s.svcCtx.JWTUtils.GenerateToken(user.ID)
+	token, err := s.svcCtx.UserTokenCache.Get(user.ID) //当前有没有token
 	if err != nil {
-		s.svcCtx.Logger.Errorf("token生成出错%v", err)
+		newtoken, err := s.svcCtx.JWTUtil.GenerateToken(user.ID)
+		if err != nil {
+			s.svcCtx.Logger.Errorf("生成token失败：%v", err)
+			return types.Error(ecode.ErrSystemError)
+		}
+		s.svcCtx.UserTokenCache.Set(user.ID, newtoken, constant.USER_TOKEN_EX)
+		token = newtoken
 	}
-
 	return types.Success(&types.LoginResp{
 		ID:    user.ID,
 		Token: token,

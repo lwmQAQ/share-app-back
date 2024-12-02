@@ -5,6 +5,7 @@ type ServerConfig struct {
 	EmailConfig EmailConfig `yaml:"email"`
 	JWTConfig   JWTConfig   `yaml:"jwt"`
 	Mysql       MysqlConfig `yaml:"mysql"`
+	Redis       RedisConfig `yaml:"redis"`
 }
 
 type EmailConfig struct {
@@ -29,4 +30,12 @@ type MysqlConfig struct {
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
 	DBName   string `yaml:"dbName"`
+}
+
+type RedisConfig struct {
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	DBName   int    `yaml:"dbName"`
 }
