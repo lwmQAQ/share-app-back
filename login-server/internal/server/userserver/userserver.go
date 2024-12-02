@@ -160,3 +160,16 @@ func (s *UserServer) GetUserinfo(userId uint64) types.Response {
 		Sex:    user.Sex,
 	})
 }
+
+func (s *UserServer) UpdateUser(update *types.UpdateUserReq) types.Response {
+	usermap := adapter.BuildUpdateUser(update)
+	err := s.svcCtx.UserDao.UserUpdate(usermap, update.ID)
+	if err != nil {
+		return types.ErrorMsg(err.Error())
+	}
+	err = s.svcCtx.UserInfoCache.Delete(update.ID)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("缓存出错 %v", err)
+	}
+	return types.Success(types.UpdateUserResp{})
+}

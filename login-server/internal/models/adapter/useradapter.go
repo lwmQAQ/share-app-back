@@ -40,3 +40,20 @@ func newUserName() string {
 	randomString := hex.EncodeToString(randomBytes) // 将随机字节转换为十六进制字符串
 	return "用户" + randomString
 }
+
+func BuildUpdateUser(user *types.UpdateUserReq) map[string]interface{} {
+	updates := map[string]interface{}{}
+
+	// 只有在字段不为空时，才添加到 updates 中
+	if user.Name != "" {
+		updates["name"] = user.Name
+	}
+	if user.Avatar != "" {
+		updates["avatar"] = user.Avatar
+	}
+	if user.Sex != 0 {
+		updates["sex"] = user.Sex
+	}
+
+	return updates
+}

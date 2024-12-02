@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"errors"
+	"fmt"
 	"login-server/internal/models"
 
 	"gorm.io/gorm"
@@ -35,4 +37,19 @@ func (d *UserDaoImpl) SelectUserById(id uint64) (*models.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (d *UserDaoImpl) UserUpdate(updates map[string]interface{}, id uint64) error {
+	// 检查是否有需要更新的字段
+	if len(updates) == 0 {
+		return errors.New("no fields to update")
+	}
+
+	// 执行更新操作，只更新不为空的字段
+	result := d.db.Model(&models.User{}).Where("id = ?", id).Updates(updates)
+	// 检查是否有错误
+	if result.Error != nil {
+		return fmt.Errorf("更新失败：%s", result.Error)
+	}
+	return nil
 }
