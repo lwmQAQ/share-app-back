@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"chatroom-server/internal/handle"
+	"chatroom-server/internal/message"
+	roomserver "chatroom-server/internal/server"
 	"chatroom-server/jinx/jnet"
 	"fmt"
 	"os"
@@ -10,6 +13,14 @@ import (
 
 func ServerStart() {
 	server := jnet.NewServer()
+	Roomserver := roomserver.NewRoomServer()
+	server.AddRouter(uint32(message.CreateRoom), &handle.RoomCreateRouter{
+		RoomServer: Roomserver,
+	})
+	server.AddRouter(uint32(message.AddRoom), &handle.RoomAddRouter{
+		RoomServer: Roomserver,
+	})
+
 	// 使用 goroutine 启动服务器
 	go func() {
 		server.Start()

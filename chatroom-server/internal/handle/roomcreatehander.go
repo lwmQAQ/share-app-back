@@ -2,7 +2,7 @@ package handle
 
 import (
 	"chatroom-server/internal/message"
-	"chatroom-server/internal/server"
+	roomserver "chatroom-server/internal/server"
 	"chatroom-server/internal/types"
 	"chatroom-server/jinx/jiface"
 	"chatroom-server/jinx/jnet"
@@ -11,7 +11,7 @@ import (
 )
 
 type RoomCreateRouter struct {
-	RoomServer *server.RoomServer
+	RoomServer *roomserver.RoomServer
 	jnet.BaseRouter
 }
 
@@ -21,18 +21,19 @@ func (r *RoomCreateRouter) Handle(req jiface.IRequest) {
 	msg := &types.CreateRoomReq{}
 	err := json.Unmarshal(req.GetData(), msg)
 	if err != nil {
-		fmt.Println("消息解析出错")
+		fmt.Printf("消息解析出错 %v", err)
 		return
 	}
-	room, err := r.RoomServer.CreateRoom(req.GetConnection(), msg)
+	resp, err := r.RoomServer.CreateRoom(req.GetConnection(), msg)
 	if err != nil {
 		err = req.GetConnection().SendMsg(uint32(message.CreateRoomError), nil)
 		if err != nil {
 			fmt.Println("写消息错误")
 		}
 	}
+
 	// 将结构体转换为 JSON 字节数组
-	jsonData, err := json.Marshal(room)
+	jsonData, err := json.Marshal(resp)
 	if err != nil {
 		fmt.Println("解析结构体错误")
 	}

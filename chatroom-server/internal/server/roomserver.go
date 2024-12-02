@@ -1,4 +1,4 @@
-package server
+package roomserver
 
 import (
 	"chatroom-server/internal/types"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"time"
 )
 
 type RoomServer struct {
@@ -23,7 +24,14 @@ type Room struct {
 	RoomMembers []jiface.IConnection //成员ID
 }
 
-func (s *RoomServer) CreateRoom(user jiface.IConnection, req *types.CreateRoomReq) (*Room, error) {
+func NewRoomServer() *RoomServer {
+	return &RoomServer{
+		Rooms: make(map[string]*Room),                      // 初始化 Rooms 映射
+		r:     rand.New(rand.NewSource(time.Now().Unix())), // 初始化随机数生成器
+	}
+}
+
+func (s *RoomServer) CreateRoom(user jiface.IConnection, req *types.CreateRoomReq) (*types.CreateRoomResp, error) {
 	roomId := s.generateRoomId()
 	room := &Room{
 		RoomID:      roomId,
@@ -34,17 +42,26 @@ func (s *RoomServer) CreateRoom(user jiface.IConnection, req *types.CreateRoomRe
 		RoomMembers: []jiface.IConnection{user}, // 初始化成员列表，包含房主,
 	}
 	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	// 将新房间添加到 Rooms
 	s.Rooms[roomId] = room
-	return room, nil
+	s.mu.Unlock()
+	//TODO 通过rpc获取用户具体信息
+	resp := &types.CreateRoomResp{
+		RoomID:     roomId,
+		RoomName:   room.RoomName,
+		MembersNum: len(room.RoomMembers),
+		IsPrivate:  room.IsPrivate,
+		Members:    nil,
+	}
+	return resp, nil
 }
 
 func (s *RoomServer) AddRoom(user jiface.IConnection, req *types.AddRoomReq) error {
+	fmt.Println("1")
 	if room, ok := s.Rooms[req.RoomID]; ok {
 		if !room.IsPrivate || req.Password == room.Password {
 			room.RoomMembers = append(room.RoomMembers, user)
+			fmt.Println("yes")
 			return nil
 		}
 		return fmt.Errorf("密码错误")

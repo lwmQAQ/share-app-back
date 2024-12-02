@@ -2,7 +2,7 @@ package handle
 
 import (
 	"chatroom-server/internal/message"
-	"chatroom-server/internal/server"
+	roomserver "chatroom-server/internal/server"
 	"chatroom-server/internal/types"
 	"chatroom-server/jinx/jiface"
 	"chatroom-server/jinx/jnet"
@@ -11,7 +11,7 @@ import (
 )
 
 type RoomAddRouter struct {
-	RoomServer *server.RoomServer
+	RoomServer *roomserver.RoomServer
 	jnet.BaseRouter
 }
 
@@ -24,15 +24,17 @@ func (r *RoomAddRouter) Handle(req jiface.IRequest) {
 		fmt.Println("消息解析出错")
 		return
 	}
+	fmt.Println("msg", msg)
 	err = r.RoomServer.AddRoom(req.GetConnection(), msg)
 	if err != nil {
-		err = req.GetConnection().SendMsg(uint32(message.AddRoomError), nil)
+		fmt.Println(123)
+		err = req.GetConnection().SendMsg(uint32(message.AddRoomError), []byte("error"))
 		if err != nil {
 			fmt.Println("写消息错误")
 		}
 	}
 
-	err = req.GetConnection().SendMsg(uint32(message.AddRoomSuccess), nil)
+	err = req.GetConnection().SendMsg(uint32(message.AddRoomSuccess), []byte("success"))
 	if err != nil {
 		fmt.Println("写消息错误")
 	}

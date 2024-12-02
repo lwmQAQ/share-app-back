@@ -2,7 +2,7 @@ package handle
 
 import (
 	"chatroom-server/internal/message"
-	"chatroom-server/internal/server"
+	roomserver "chatroom-server/internal/server"
 	"chatroom-server/internal/types"
 	"chatroom-server/jinx/jiface"
 	"chatroom-server/jinx/jnet"
@@ -11,7 +11,7 @@ import (
 )
 
 type SendTextRouter struct {
-	RoomServer *server.RoomServer
+	RoomServer *roomserver.RoomServer
 	jnet.BaseRouter
 }
 
