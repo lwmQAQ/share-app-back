@@ -1,14 +1,6 @@
 server:
   host: 127.0.0.1
-  port: 8080
-jwt:
-  key: lwmhaoshuai
+  port: 8081
 
-email: 
-  host: "smtp.qq.com"
-  port: 465
-  userName: "3191711818@qq.com"
-  password: "piokodbqjuiaddba"
-  from: "3191711818@qq.com"
 
 
