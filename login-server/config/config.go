@@ -3,6 +3,8 @@ package config
 type ServerConfig struct {
 	Server      Server      `yaml:"server"`
 	EmailConfig EmailConfig `yaml:"email"`
+	JWTConfig   JWTConfig   `yaml:"jwt"`
+	Mysql       MysqlConfig `yaml:"mysql"`
 }
 
 type EmailConfig struct {
@@ -19,4 +21,12 @@ type Server struct {
 }
 type JWTConfig struct {
 	Key string `yaml:"key"`
+}
+
+type MysqlConfig struct {
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	DBName   string `yaml:"dbName"`
 }
