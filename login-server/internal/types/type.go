@@ -44,6 +44,11 @@ type GetUserInfoResp struct {
 	Sex    int    `json:"sex,options=1|2"`
 }
 
+type LoginCodeReq struct {
+	Email string `json:"email" validate:"required,email"`
+	Code  string `json:"code" validate:"required"`
+}
+
 type LoginReq struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
