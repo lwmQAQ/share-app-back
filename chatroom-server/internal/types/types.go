@@ -10,3 +10,8 @@ type AddRoomReq struct {
 	RoomID   string `json:"roomId"`
 	Password string `json:"password"`
 }
+
+type SendTextMsg struct {
+	RoomID string `json:"roomId"`
+	Text   string `json:"text"`
+}

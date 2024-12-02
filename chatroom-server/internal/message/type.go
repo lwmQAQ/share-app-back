@@ -9,4 +9,8 @@ const (
 	AddRoom
 	AddRoomSuccess
 	AddRoomError
+	SendTextMsg
+	SendTextMsgSuccess
+	SendTextMsgError
+	TextMessage
 )
