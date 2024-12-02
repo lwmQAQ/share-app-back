@@ -27,3 +27,12 @@ func (d *UserDaoImpl) GetUserByEmail(email string) (*models.User, error) {
 func (d *UserDaoImpl) CreateUser(user *models.User) error {
 	return d.db.Create(user).Error
 }
+
+func (d *UserDaoImpl) SelectUserById(id uint64) (*models.User, error) {
+	var user models.User
+
+	if err := d.db.Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"context"
+	"login-server/internal/ecode"
 	"login-server/internal/server/userserver"
 	"login-server/internal/svc"
 	"login-server/internal/types"
@@ -12,8 +13,23 @@ import (
 )
 
 func GetUserInfoHandler(c *gin.Context, svc *svc.ServiceContext) {
+	userId, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusBadRequest, types.Error(ecode.ErrUserNotExist))
+		return
+	}
 
+	userIdUint64, ok := userId.(uint64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, types.Error(ecode.ErrUserNotExist))
+		return
+	}
+
+	server := userserver.NewUserServer(context.Background(), svc)
+	resp := server.GetUserinfo(userIdUint64)
+	c.JSON(http.StatusOK, resp)
 }
+
 func LoginByCoderHandler(c *gin.Context, svc *svc.ServiceContext) {
 	ip := c.ClientIP()
 	var req = new(types.LoginCodeReq) // 初始化结构体指针

@@ -120,3 +120,23 @@ func (s *UserServer) Register(req *types.RegisterReq, ip string) types.Response 
 		Token: newtoken,
 	})
 }
+
+func (s *UserServer) GetUserinfo(userId uint64) types.Response {
+
+	user, err := s.svcCtx.UserInfoCache.Get(userId)
+
+	if err != nil {
+		//加入缓存
+		s.svcCtx.Logger.Infof("redis中不存在key%d", userId)
+		user, err = s.svcCtx.UserInfoCache.LoadCache(userId)
+		if err != nil {
+			return types.Error(ecode.ErrUserNotExist)
+		}
+	}
+	return types.Success(types.GetUserInfoResp{
+		ID:     userId,
+		Name:   user.Name,
+		Avatar: user.Avatar,
+		Sex:    user.Sex,
+	})
+}

@@ -21,13 +21,14 @@ type ServiceContext struct {
 
 	UserTokenCache *cache.UserTokenCache
 	CodeCache      *cache.CodeCache
+	UserInfoCache  *cache.UserInfoCache
 }
 
 func NewServerContext() *ServiceContext {
 	logger := middleware.NewLogger()
 	config := config.ReaderConfig(logger)
 	mysql := mysqldb.NewMysql(&config.Mysql)
-	dao.NewUserDaoImpl(mysql)
+	userdao := dao.NewUserDaoImpl(mysql)
 
 	redisutil := utils.NewRedisUtil(&config.Redis)
 	email := utils.NewEmailUtils(&config.EmailConfig)
@@ -35,6 +36,7 @@ func NewServerContext() *ServiceContext {
 
 	usertokencache := cache.NewUserTokenCache(redisutil)
 	codecache := cache.NewCodeCache(redisutil)
+	userinfocache := cache.NewUserInfoCache(redisutil, userdao)
 	return &ServiceContext{
 		JWTUtil:        jwt,
 		Emailutil:      email,
@@ -42,6 +44,8 @@ func NewServerContext() *ServiceContext {
 		RedisUtil:      redisutil,
 		UserTokenCache: usertokencache,
 		CodeCache:      codecache,
+		UserInfoCache:  userinfocache,
+		UserDao:        userdao,
 	}
 
 }
