@@ -41,6 +41,17 @@ func (s *RoomServer) CreateRoom(user jiface.IConnection, req *types.CreateRoomRe
 	return room, nil
 }
 
+func (s *RoomServer) AddRoom(user jiface.IConnection, req *types.AddRoomReq) error {
+	if room, ok := s.Rooms[req.RoomID]; ok {
+		if !room.IsPrivate || req.Password == room.Password {
+			room.RoomMembers = append(room.RoomMembers, user)
+			return nil
+		}
+		return fmt.Errorf("密码错误")
+	}
+	return fmt.Errorf("房间不存在")
+}
+
 func (s *RoomServer) generateRoomId() string {
 	for {
 		roomId := s.generateRoomCode()
