@@ -1,0 +1,10 @@
+application:
+  tcp-server: null
+  host: "127.0.0.1"
+  port: 8888
+  name: "MyServer"
+  version: "v1.0.0"
+  max-conn: 2000
+  max-package-size: 8192
+  worker-poll-size: 10
+  max-task-queue-num: 1024
