@@ -3,29 +3,53 @@ package utils
 import (
 	"fmt"
 	"login-server/config"
+	"math/rand"
+	"time"
 
 	"github.com/matcornic/hermes/v2"
 	"gopkg.in/gomail.v2"
 )
 
-type EmailUtils struct {
+type EmailUtil struct {
 	config *config.EmailConfig
 }
 
-func NewEmailUtils(config *config.EmailConfig) *EmailUtils {
+func NewEmailUtils(config *config.EmailConfig) *EmailUtil {
 
-	return &EmailUtils{
+	return &EmailUtil{
 		config: config,
 	}
 }
 
-func (e *EmailUtils) sendhtmlEmail(body string, toEmail string) error {
+func (e *EmailUtil) sendhtmlEmail(body string, toEmail string) error {
 	m := gomail.NewMessage()
 	// 设置发件人
 	m.SetHeader("From", e.config.From)
 	// 设置收件人
 	m.SetHeader("To", toEmail)
+	m.SetHeader("Subject", "lwm的app")
 	m.SetBody("text/html", body)
+	// 设置SMTP服务器信息
+	d := gomail.NewDialer(e.config.Host, e.config.Port, e.config.From, e.config.Password)
+
+	// 发送邮件
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println("发送邮件时出错:", err)
+		return err
+	}
+
+	fmt.Println("邮件发送成功！")
+	return nil
+}
+
+func (e *EmailUtil) sendTextEmail(body string, toEmail string) error {
+	m := gomail.NewMessage()
+	// 设置发件人
+	m.SetHeader("From", e.config.From)
+	// 设置收件人
+	m.SetHeader("To", toEmail)
+	m.SetHeader("Subject", "lwm的app")
+	m.SetBody("text/plain", body)
 	// 设置SMTP服务器信息
 	d := gomail.NewDialer(e.config.Host, e.config.Port, e.config.From, e.config.Password)
 
@@ -42,7 +66,7 @@ func (e *EmailUtils) sendhtmlEmail(body string, toEmail string) error {
 /*
 发送修改密码
 */
-func (e *EmailUtils) SendHTMLEmail(name string, link string, toEmail string) error {
+func (e *EmailUtil) SendHTMLEmail(name string, link string, toEmail string) error {
 	h := hermes.Hermes{
 		// Optional Theme
 		// Theme: new(Default)
@@ -85,10 +109,18 @@ func (e *EmailUtils) SendHTMLEmail(name string, link string, toEmail string) err
 	return e.sendhtmlEmail(emailBody, toEmail)
 }
 
-func SendCodeEmail(toEmail string) {
-
+func (e *EmailUtil) SendCode(toEmail string, code string) error {
+	body := fmt.Sprintf("欢迎使用我的软件，你的验证码是:%s", code)
+	return e.sendTextEmail(body, toEmail)
 }
 
-func SendIPChangeEmail(toEmail string) {
+func (e *EmailUtil) SendIPChangeEmail(toEmail string) {
 	//TODO 处理ip异常的email
+}
+
+func CreateCode() string {
+	// 创建一个新的随机数生成器，并使用当前时间作为种子
+	randGenerator := rand.New(rand.NewSource(time.Now().UnixNano()))
+	code := randGenerator.Intn(1000000) // 生成一个 0 到 999999 之间的随机数
+	return fmt.Sprintf("%06d", code)    // 格式化成六位数，不足六位时前面补零
 }

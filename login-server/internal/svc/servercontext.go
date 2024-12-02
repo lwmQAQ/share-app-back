@@ -14,12 +14,13 @@ import (
 type ServiceContext struct {
 	Logger       *logrus.Logger
 	ServerConfig config.ServerConfig
-	Emailutils   *utils.EmailUtils
+	Emailutil    *utils.EmailUtil
 	JWTUtil      *utils.JWTUtil
 	RedisUtil    *utils.RedisUtil
 	UserDao      dao.UserDao
 
 	UserTokenCache *cache.UserTokenCache
+	CodeCache      *cache.CodeCache
 }
 
 func NewServerContext() *ServiceContext {
@@ -33,12 +34,14 @@ func NewServerContext() *ServiceContext {
 	jwt := utils.NewJWTUtil(&config.JWTConfig)
 
 	usertokencache := cache.NewUserTokenCache(redisutil)
+	codecache := cache.NewCodeCache(redisutil)
 	return &ServiceContext{
 		JWTUtil:        jwt,
-		Emailutils:     email,
+		Emailutil:      email,
 		Logger:         logger,
 		RedisUtil:      redisutil,
 		UserTokenCache: usertokencache,
+		CodeCache:      codecache,
 	}
 
 }

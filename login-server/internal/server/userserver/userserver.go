@@ -46,3 +46,19 @@ func (s *UserServer) Login(req *types.LoginReq, ip string) types.Response {
 		Token: token,
 	})
 }
+
+func (s *UserServer) SendCode(Email string) types.Response {
+	code := utils.CreateCode()
+	err := s.svcCtx.Emailutil.SendCode(Email, code)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("发送邮箱工具失败：%v", err)
+		return types.Error(ecode.ErrSystemError)
+	}
+	//写入redis
+	err = s.svcCtx.CodeCache.Put(code, Email)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("redis 出错：%v", err)
+		return types.Error(ecode.ErrSystemError)
+	}
+	return types.Success(nil)
+}
