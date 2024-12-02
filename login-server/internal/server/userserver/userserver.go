@@ -8,6 +8,9 @@ import (
 	"login-server/internal/svc"
 	"login-server/internal/types"
 	"login-server/utils"
+	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type UserServer struct {
@@ -35,8 +38,16 @@ func (s *UserServer) LoginByCode(req *types.LoginCodeReq, ip string) types.Respo
 	if err != nil {
 		return types.Error(ecode.ErrUserNotFound)
 	}
-	// TODO 检验ip
+	// ip异常发送短信警告 解析ip
+	go func(log *logrus.Logger) {
+		if ok := utils.ContainString(strings.Split(user.IPInfo, ","), ip); !ok { //异常ip
+			err := s.svcCtx.Emailutil.SendIPChangeEmail(req.Email)
+			if err != nil {
+				log.Errorf("发送邮件失败%v", err)
+			}
 
+		}
+	}(s.svcCtx.Logger)
 	//将token存入redis
 	token, err := s.svcCtx.UserTokenCache.Get(user.ID) //当前有没有token
 	if err != nil {
@@ -64,7 +75,16 @@ func (s *UserServer) Login(req *types.LoginReq, ip string) types.Response {
 	if err = utils.Verify(user.Password, req.Password); err != nil {
 		return types.Error(ecode.ErrPassWordError)
 	}
-	// TODO ip异常发送短信警告
+	// ip异常发送短信警告 解析ip
+	go func(log *logrus.Logger) {
+		if ok := utils.ContainString(strings.Split(user.IPInfo, ","), ip); !ok { //异常ip
+			err := s.svcCtx.Emailutil.SendIPChangeEmail(req.Email)
+			if err != nil {
+				log.Errorf("发送邮件失败%v", err)
+			}
+
+		}
+	}(s.svcCtx.Logger)
 	//将token存入redis
 	token, err := s.svcCtx.UserTokenCache.Get(user.ID) //当前有没有token
 	if err != nil {

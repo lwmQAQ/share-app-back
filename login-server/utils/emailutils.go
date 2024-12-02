@@ -114,8 +114,10 @@ func (e *EmailUtil) SendCode(toEmail string, code string) error {
 	return e.sendTextEmail(body, toEmail)
 }
 
-func (e *EmailUtil) SendIPChangeEmail(toEmail string) {
+func (e *EmailUtil) SendIPChangeEmail(toEmail string) error {
 	//TODO 处理ip异常的email
+	body := fmt.Sprintln("警告！！！\n你的账号在不常用设备登录 \n 如果不是本人操作请尽快更改密码")
+	return e.sendTextEmail(body, toEmail)
 }
 
 func CreateCode() string {
