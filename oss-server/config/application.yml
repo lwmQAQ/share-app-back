@@ -4,3 +4,8 @@ server:
 
 
 
+minio:
+  endpoint: 121.37.228.161:9000
+  accessKeyID: 6t9XgA7VkE0va0xCvZmj
+  secretAccessKey: Zl5wiCQNR179Hzq5zFwMz2fYxMpGpSdmKbmwLkvw
+  bucketName: analysis

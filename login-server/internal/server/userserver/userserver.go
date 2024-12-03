@@ -104,13 +104,17 @@ func (s *UserServer) Login(req *types.LoginReq, ip string) types.Response {
 
 func (s *UserServer) SendCode(Email string) types.Response {
 	code := utils.CreateCode()
-	err := s.svcCtx.Emailutil.SendCode(Email, code)
-	if err != nil {
-		s.svcCtx.Logger.Errorf("发送邮箱工具失败：%v", err)
-		return types.Error(ecode.ErrSystemError)
-	}
+	//异步发送邮件
+	go func(emailUtils *utils.EmailUtil, logger *logrus.Logger) {
+		//增加重试机制
+		err := emailUtils.SendCode(Email, code)
+		if err != nil {
+			logger.Errorf("发送邮箱工具失败：%v", err)
+		}
+	}(s.svcCtx.Emailutil, s.svcCtx.Logger)
+
 	//写入redis
-	err = s.svcCtx.CodeCache.Put(code, Email)
+	err := s.svcCtx.CodeCache.Put(code, Email)
 	if err != nil {
 		s.svcCtx.Logger.Errorf("redis 出错：%v", err)
 		return types.Error(ecode.ErrSystemError)

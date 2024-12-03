@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"context"
+	"fmt"
 	"login-server/internal/ecode"
 	"login-server/internal/server/userserver"
 	"login-server/internal/svc"
@@ -13,11 +14,13 @@ import (
 )
 
 func GetUserInfoHandler(c *gin.Context, svc *svc.ServiceContext) {
+
 	userId, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusBadRequest, types.Error(ecode.ErrUserNotExist))
 		return
 	}
+	fmt.Println("id", userId)
 
 	userIdUint64, ok := userId.(uint64)
 	if !ok {
@@ -100,6 +103,7 @@ func SendCodeHandler(c *gin.Context, svc *svc.ServiceContext) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
+
 	//参数校验
 	if err := middleware.ValidateStruct(req); err != nil {
 		svc.Logger.Errorf("Failed to bind JSON: %v", err)

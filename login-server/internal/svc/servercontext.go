@@ -13,7 +13,7 @@ import (
 
 type ServiceContext struct {
 	Logger       *logrus.Logger
-	ServerConfig config.ServerConfig
+	ServerConfig *config.ServerConfig
 	Emailutil    *utils.EmailUtil
 	JWTUtil      *utils.JWTUtil
 	RedisUtil    *utils.RedisUtil
@@ -31,13 +31,14 @@ func NewServerContext() *ServiceContext {
 	userdao := dao.NewUserDaoImpl(mysql)
 
 	redisutil := utils.NewRedisUtil(&config.Redis)
-	email := utils.NewEmailUtils(&config.EmailConfig)
-	jwt := utils.NewJWTUtil(&config.JWTConfig)
+	email := utils.NewEmailUtils(&config.Email)
+	jwt := utils.NewJWTUtil(&config.JWT)
 
 	usertokencache := cache.NewUserTokenCache(redisutil)
 	codecache := cache.NewCodeCache(redisutil)
 	userinfocache := cache.NewUserInfoCache(redisutil, userdao)
 	return &ServiceContext{
+		ServerConfig:   config,
 		JWTUtil:        jwt,
 		Emailutil:      email,
 		Logger:         logger,

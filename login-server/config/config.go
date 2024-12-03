@@ -1,11 +1,11 @@
 package config
 
 type ServerConfig struct {
-	Server      Server      `yaml:"server"`
-	EmailConfig EmailConfig `yaml:"email"`
-	JWTConfig   JWTConfig   `yaml:"jwt"`
-	Mysql       MysqlConfig `yaml:"mysql"`
-	Redis       RedisConfig `yaml:"redis"`
+	Server Server      `yaml:"server"`
+	Email  EmailConfig `yaml:"email"`
+	JWT    JWTConfig   `yaml:"jwt"`
+	Mysql  MysqlConfig `yaml:"mysql"`
+	Redis  RedisConfig `yaml:"redis"`
 }
 
 type EmailConfig struct {

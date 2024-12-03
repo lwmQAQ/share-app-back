@@ -1,6 +1,7 @@
 server:
   host: 127.0.0.1
   port: 8080
+
 jwt:
   key: lwmhaoshuai
 
@@ -11,4 +12,16 @@ email:
   password: "piokodbqjuiaddba"
   from: "3191711818@qq.com"
 
+redis:
+  host: 10.61.145.241
+  dbName: 1
+  port: 6379
+  user: root
+  password: "0618"
 
+mysql:
+  host: 10.61.145.241
+  port: 3306
+  dbName: ResourceShare
+  user: root
+  password: "0618"

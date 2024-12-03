@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"login-server/internal/router"
 	"login-server/internal/svc"
 
 	"github.com/gin-contrib/cors"
@@ -18,6 +19,7 @@ func ServerStart() {
 		ExposeHeaders: []string{"X-My-Custom-Header"},                      // 可跨域访问的响应头
 	}))
 	svc := svc.NewServerContext()
+	router.AddRouter(r, svc)
 	addr := fmt.Sprintf("%s:%d", svc.ServerConfig.Server.Host, svc.ServerConfig.Server.Port)
 	r.Run(addr) // 运行服务器
 }

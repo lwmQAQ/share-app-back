@@ -10,8 +10,8 @@ import (
 
 func UserVerifyMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 获取 Authorization 头
 
+		// 获取 Authorization 头
 		tokenString := c.Request.Header.Get("Authorization")
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing"})
