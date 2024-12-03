@@ -16,6 +16,7 @@ type ServiceContext struct {
 	ServerConfig *config.ServerConfig
 	Emailutil    *utils.EmailUtil
 	JWTUtil      *utils.JWTUtil
+	EtcdUtil     *utils.ETCDUtil
 	RedisUtil    *utils.RedisUtil
 	UserDao      dao.UserDao
 
@@ -30,19 +31,21 @@ func NewServerContext() *ServiceContext {
 	mysql := mysqldb.NewMysql(&config.Mysql)
 	userdao := dao.NewUserDaoImpl(mysql)
 
-	redisutil := utils.NewRedisUtil(&config.Redis)
+	redis := utils.NewRedisUtil(&config.Redis)
+	etcd := utils.NewETCDUtil(&config.Etcd)
 	email := utils.NewEmailUtils(&config.Email)
 	jwt := utils.NewJWTUtil(&config.JWT)
 
-	usertokencache := cache.NewUserTokenCache(redisutil)
-	codecache := cache.NewCodeCache(redisutil)
-	userinfocache := cache.NewUserInfoCache(redisutil, userdao)
+	usertokencache := cache.NewUserTokenCache(redis)
+	codecache := cache.NewCodeCache(redis)
+	userinfocache := cache.NewUserInfoCache(redis, userdao)
 	return &ServiceContext{
 		ServerConfig:   config,
 		JWTUtil:        jwt,
 		Emailutil:      email,
 		Logger:         logger,
-		RedisUtil:      redisutil,
+		RedisUtil:      redis,
+		EtcdUtil:       etcd,
 		UserTokenCache: usertokencache,
 		CodeCache:      codecache,
 		UserInfoCache:  userinfocache,

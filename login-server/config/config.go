@@ -1,11 +1,13 @@
 package config
 
 type ServerConfig struct {
-	Server Server      `yaml:"server"`
-	Email  EmailConfig `yaml:"email"`
-	JWT    JWTConfig   `yaml:"jwt"`
-	Mysql  MysqlConfig `yaml:"mysql"`
-	Redis  RedisConfig `yaml:"redis"`
+	Server    Server      `yaml:"server"`
+	RpcServer RpcServer   `yaml:"rpcserver"`
+	Email     EmailConfig `yaml:"email"`
+	JWT       JWTConfig   `yaml:"jwt"`
+	Mysql     MysqlConfig `yaml:"mysql"`
+	Redis     RedisConfig `yaml:"redis"`
+	Etcd      EtcdConfig  `yaml:"etcd"`
 }
 
 type EmailConfig struct {
@@ -19,6 +21,12 @@ type EmailConfig struct {
 type Server struct {
 	Host string `yaml:"host"`
 	Port int32  `yaml:"port"`
+}
+
+type RpcServer struct {
+	ServerName string `yaml:"servername"`
+	Host       string `yaml:"host"`
+	Port       int32  `yaml:"port"`
 }
 type JWTConfig struct {
 	Key string `yaml:"key"`
@@ -38,4 +46,9 @@ type RedisConfig struct {
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
 	DBName   int    `yaml:"dbName"`
+}
+
+type EtcdConfig struct {
+	Addrs   []string `yaml:"addrs"`
+	Timeout int      `yaml:"timeout"`
 }

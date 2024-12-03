@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package userserver;
+option go_package = "internal/rpcclient/userserver;userserver"; 
+
+// 定义一个消息
+message GetUserInfoReq {
+    uint32 id = 1;       // 用户 ID
+}
+// 定义一个消息
+message GetUserInfoResp {
+    uint32 id = 1;       // 用户 ID
+    string username =2;
+    string avatar =3;
+    int32 sex=4;
+}
+
+
+// 定义一个服务
+service UserService {
+    // 获取用户信息
+    rpc GetUserInfo (GetUserInfoReq) returns (GetUserInfoResp);
+}
