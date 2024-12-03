@@ -38,10 +38,13 @@ func ErrorMsg(msg string) Response {
 }
 
 type GetUserInfoResp struct {
-	ID     uint64 `json:"id" validate:"required"`
-	Name   string `json:"name"`
-	Avatar string `json:"avatar"`
-	Sex    int    `json:"sex,options=1|2"`
+	ID         uint64 `json:"id" validate:"required"`
+	Name       string `json:"name"`
+	Avatar     string `json:"avatar"`
+	Sex        int    `json:"sex,options=1|2"`
+	Bio        string `json:"bio"`
+	Experience int    `json:"experience"`
+	Level      int    `json:"level"`
 }
 
 type LoginCodeReq struct {

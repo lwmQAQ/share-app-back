@@ -158,10 +158,13 @@ func (s *UserServer) GetUserinfo(userId uint64) types.Response {
 		}
 	}
 	return types.Success(types.GetUserInfoResp{
-		ID:     userId,
-		Name:   user.Name,
-		Avatar: user.Avatar,
-		Sex:    user.Sex,
+		ID:         userId,
+		Name:       user.Name,
+		Avatar:     user.Avatar,
+		Sex:        user.Sex,
+		Bio:        user.Bio,
+		Level:      user.Level,
+		Experience: user.Experience,
 	})
 }
 
