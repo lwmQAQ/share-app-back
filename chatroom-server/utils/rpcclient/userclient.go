@@ -42,6 +42,18 @@ func (client *UserRpcClient) GetUserInfo(ctx context.Context, param *userclient.
 	return result, err
 }
 
+func (client *UserRpcClient) BatchGetUserInfo(ctx context.Context, param *userclient.BatchGetUserInfoReq, addr string) (*userclient.BatchGetUserInfoResp, error) {
+	conn := client.Servers[addr].Get()
+	defer client.Servers[addr].Put(conn)
+
+	if conn == nil {
+		return nil, fmt.Errorf("failed to get connection for address: %s", addr)
+	}
+	userclient := userclient.NewUserServiceClient(conn)
+	result, err := userclient.BatchGetUserInfo(ctx, param)
+	return result, err
+}
+
 /*
 在 UpdateServer 方法中，可以遍历传入的新地址列表 (addrs)，并与当前已有的连接池对比：
 对于 addrs 中的每个地址，如果当前 Servers 中没有这个地址，则创建一个新的连接池并添加到 Servers。

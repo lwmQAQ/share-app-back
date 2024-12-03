@@ -100,6 +100,8 @@ func (s *RoomServer) getRoomMebers(roomID string) ([]*types.Member, error) {
 	// TODO 加一个rpc方法批量获取用户
 	var members []*types.Member
 	if room, ok := s.Rooms[roomID]; ok {
+		//获取 用户ids
+		var ids []uint64
 		for _, member := range room.RoomMembers {
 			fmt.Println("member", member.GetConnID())
 			//从链接属性获取用户id
@@ -107,24 +109,28 @@ func (s *RoomServer) getRoomMebers(roomID string) ([]*types.Member, error) {
 			if err != nil {
 				return nil, err
 			}
-			rpcreq := &userclient.GetUserInfoReq{
-				Id: userID.(uint64),
+			ids = append(ids, userID.(uint64))
+		}
+		//rpc请求获取用户
+		rpcreq := &userclient.BatchGetUserInfoReq{
+			Ids: ids,
+		}
+		addr, err := s.ctx.EtcdUtil.GetServiceInstance("UserServer")
+		if err != nil {
+			return nil, err
+		}
+		m, err := s.ctx.UserRpcClient.BatchGetUserInfo(context.Background(), rpcreq, addr)
+		if err != nil {
+			return nil, fmt.Errorf("rpc出错")
+		}
+		//批量处理获取的用户
+		for _, user := range m.Users {
+			u := &types.Member{
+				Username: user.Username,
+				Avatar:   user.Avatar,
+				Sex:      user.Sex,
 			}
-			addr, err := s.ctx.EtcdUtil.GetServiceInstance("UserServer")
-			fmt.Println("addr", addr)
-			if err != nil {
-				return nil, err
-			}
-			m, err := s.ctx.UserRpcClient.GetUserInfo(context.Background(), rpcreq, addr)
-			if err != nil {
-				return nil, fmt.Errorf("rpc出错")
-			}
-			mem := &types.Member{
-				Username: m.Username,
-				Avatar:   m.Avatar,
-				Sex:      m.Sex,
-			}
-			members = append(members, mem)
+			members = append(members, u)
 		}
 		return members, nil
 	}
