@@ -86,6 +86,7 @@ type UpdateUserReq struct {
 	Name   string `json:"name,optional"`
 	Avatar string `json:"avatar,optional"`
 	Sex    int    `json:"sex,options=1|2"`
+	Bio    string `json:"bio,optional"`
 }
 
 type UpdateUserResp struct {

@@ -25,6 +25,7 @@ func BuildInsertUser(req *types.RegisterReq, ip string) (*models.User, error) {
 		SetStatus(0).
 		SetIPInfo(ipInfo).
 		SetEmail(req.Email).
+		SetBio("这个人很懒，什么都没设置").
 		SetPassword(password).
 		Build()
 	return &user, nil
@@ -53,6 +54,9 @@ func BuildUpdateUser(user *types.UpdateUserReq) map[string]interface{} {
 	}
 	if user.Sex != 0 {
 		updates["sex"] = user.Sex
+	}
+	if user.Bio != "" {
+		updates["bio"] = user.Bio
 	}
 
 	return updates
