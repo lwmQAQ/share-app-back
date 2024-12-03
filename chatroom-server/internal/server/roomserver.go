@@ -1,8 +1,11 @@
 package roomserver
 
 import (
+	"chatroom-server/internal/rpcclient/userclient"
+	"chatroom-server/internal/svc"
 	"chatroom-server/internal/types"
 	"chatroom-server/jinx/jiface"
+	"context"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -10,6 +13,7 @@ import (
 )
 
 type RoomServer struct {
+	ctx   *svc.ServiceContext
 	Rooms map[string]*Room
 	mu    sync.Mutex // 用于保护 Rooms
 	r     *rand.Rand // 复用随机数生成器
@@ -24,8 +28,9 @@ type Room struct {
 	RoomMembers []jiface.IConnection //成员ID
 }
 
-func NewRoomServer() *RoomServer {
+func NewRoomServer(ctx *svc.ServiceContext) *RoomServer {
 	return &RoomServer{
+		ctx:   ctx,
 		Rooms: make(map[string]*Room),                      // 初始化 Rooms 映射
 		r:     rand.New(rand.NewSource(time.Now().Unix())), // 初始化随机数生成器
 	}
@@ -45,27 +50,31 @@ func (s *RoomServer) CreateRoom(user jiface.IConnection, req *types.CreateRoomRe
 	// 将新房间添加到 Rooms
 	s.Rooms[roomId] = room
 	s.mu.Unlock()
+
 	//TODO 通过rpc获取用户具体信息
+	members, err := s.getRoomMebers(roomId)
+	if err != nil {
+		return nil, err
+	}
 	resp := &types.CreateRoomResp{
 		RoomID:     roomId,
 		RoomName:   room.RoomName,
 		MembersNum: len(room.RoomMembers),
 		IsPrivate:  room.IsPrivate,
-		Members:    nil,
+		Members:    members,
 	}
 	return resp, nil
 }
 
 func (s *RoomServer) AddRoom(user jiface.IConnection, req *types.AddRoomReq) error {
-	fmt.Println("1")
 	if room, ok := s.Rooms[req.RoomID]; ok {
 		if !room.IsPrivate || req.Password == room.Password {
 			room.RoomMembers = append(room.RoomMembers, user)
-			fmt.Println("yes")
 			return nil
 		}
 		return fmt.Errorf("密码错误")
 	}
+
 	return fmt.Errorf("房间不存在")
 }
 
@@ -85,4 +94,39 @@ func (s *RoomServer) generateRoomCode() string {
 	// 使用当前时间作为种子创建本地随机生成器
 	roomCode := s.r.Intn(90000000) + 10000000 // 改为8位数
 	return fmt.Sprintf("%08d", roomCode)
+}
+
+func (s *RoomServer) getRoomMebers(roomID string) ([]*types.Member, error) {
+	// TODO 加一个rpc方法批量获取用户
+	var members []*types.Member
+	if room, ok := s.Rooms[roomID]; ok {
+		for _, member := range room.RoomMembers {
+			fmt.Println("member", member.GetConnID())
+			//从链接属性获取用户id
+			userID, err := member.GetProperty("UserID")
+			if err != nil {
+				return nil, err
+			}
+			rpcreq := &userclient.GetUserInfoReq{
+				Id: userID.(uint64),
+			}
+			addr, err := s.ctx.EtcdUtil.GetServiceInstance("UserServer")
+			fmt.Println("addr", addr)
+			if err != nil {
+				return nil, err
+			}
+			m, err := s.ctx.UserRpcClient.GetUserInfo(context.Background(), rpcreq, addr)
+			if err != nil {
+				return nil, fmt.Errorf("rpc出错")
+			}
+			mem := &types.Member{
+				Username: m.Username,
+				Avatar:   m.Avatar,
+				Sex:      m.Sex,
+			}
+			members = append(members, mem)
+		}
+		return members, nil
+	}
+	return nil, fmt.Errorf("房间不存在")
 }

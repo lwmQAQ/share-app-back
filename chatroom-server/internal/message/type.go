@@ -13,4 +13,7 @@ const (
 	SendTextMsgSuccess
 	SendTextMsgError
 	TextMessage
+	SetUserAttribute
+	SetUserAttributeSuccess
+	SetUserAttributeError
 )

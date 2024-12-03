@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package userserver;
-option go_package = "internal/rpcclient/userserver;userserver"; 
+option go_package = "internal/rpcclient/userclient;userclient"; 
 
 // 定义一个消息
 message GetUserInfoReq {

@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: protos/user.proto
 
-package userserver
+package userclient
 
 import (
 	context "context"

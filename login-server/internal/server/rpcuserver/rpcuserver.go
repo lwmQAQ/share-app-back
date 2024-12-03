@@ -29,6 +29,6 @@ func (s *RpcUserServer) GetUserInfo(ctx context.Context, req *rpc.GetUserInfoReq
 		Username: user.Name,
 		Avatar:   user.Avatar,
 		Sex:      int32(user.Sex),
-		Id:       uint32(user.ID),
+		Id:       user.ID,
 	}, nil
 }

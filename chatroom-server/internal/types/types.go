@@ -6,17 +6,17 @@ type CreateRoomReq struct {
 	RoomName  string `json:"roomName"`
 }
 type CreateRoomResp struct {
-	MembersNum int      `json:"membersNum"`
-	IsPrivate  bool     `json:"isPrivate"`
-	RoomID     string   `json:"roomId"`
-	RoomName   string   `json:"roomName"`
-	Members    []Member `json:"members"`
+	MembersNum int       `json:"membersNum"`
+	IsPrivate  bool      `json:"isPrivate"`
+	RoomID     string    `json:"roomId"`
+	RoomName   string    `json:"roomName"`
+	Members    []*Member `json:"members"`
 }
 
 type Member struct {
 	Username string `json:"username"`
 	Avatar   string `json:"avatar"`
-	Sex      int    `json:"sex"`
+	Sex      int32  `json:"sex"`
 }
 type AddRoomReq struct {
 	RoomID   string `json:"roomId"`
@@ -26,4 +26,9 @@ type AddRoomReq struct {
 type SendTextMsg struct {
 	RoomID string `json:"roomId"`
 	Text   string `json:"text"`
+}
+
+type SetUserAttribute struct {
+	Key   string `json:"key"`
+	Value any    `json:"value"`
 }

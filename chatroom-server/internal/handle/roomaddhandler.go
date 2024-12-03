@@ -24,10 +24,8 @@ func (r *RoomAddRouter) Handle(req jiface.IRequest) {
 		fmt.Println("消息解析出错")
 		return
 	}
-	fmt.Println("msg", msg)
 	err = r.RoomServer.AddRoom(req.GetConnection(), msg)
 	if err != nil {
-		fmt.Println(123)
 		err = req.GetConnection().SendMsg(uint32(message.AddRoomError), []byte("error"))
 		if err != nil {
 			fmt.Println("写消息错误")
