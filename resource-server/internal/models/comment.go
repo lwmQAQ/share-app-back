@@ -15,7 +15,7 @@ type Comment struct {
 	PostID    uint64    `bson:"postId" json:"postId"`                         // 所属帖子 ID
 	ParentID  *uint64   `bson:"parentId,omitempty" json:"parentId,omitempty"` // 父评论 ID
 	Content   string    `bson:"content" json:"content"`                       // 评论内容
-	Timestamp time.Time `bson:"timestamp" json:"timestamp"`                   // 评论时间
+	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`                   // 创建时间（修改为更具描述性的字段名）
 	Level     int       `bson:"level" json:"level"`                           // 评论层级（1 表示一级评论，2 表示二级评论，依此类推）
 	Path      string    `bson:"path" json:"path"`                             // 用于表示评论的层级路径，例如 "1", "1.2", "1.2.3" 等
 	Likes     uint64    `bson:"likes" json:"likes"`                           // 点赞数

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package userserver;
+option go_package = "internal/rpcclient/userclient;userclient"; 
+
+// 定义一个消息
+message GetUserInfoReq {
+    uint64 id = 1;       // 用户 ID
+}
+// 定义一个消息
+message GetUserInfoResp {
+    uint64 id = 1;       // 用户 ID
+    string username =2;
+    string avatar =3;
+    int32 sex=4;
+}
+
+message BatchGetUserInfoReq {
+    repeated uint64 ids = 1; // 用户 ID 列表
+}
+
+message BatchGetUserInfoResp{
+    repeated GetUserInfoResp users= 1;
+}
+
+// 定义一个服务
+service UserService {
+    // 获取用户信息
+    rpc GetUserInfo (GetUserInfoReq) returns (GetUserInfoResp);
+    rpc BatchGetUserInfo(BatchGetUserInfoReq) returns  (BatchGetUserInfoResp);
+}

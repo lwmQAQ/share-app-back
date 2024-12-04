@@ -38,13 +38,13 @@ func NewMongoUtil(logger *logrus.Logger, MongoConfig *config.MongoConfig) *Mongo
 }
 
 // 插入文档
-func (u *MongoUtil) InsertDocument(collectionName string, document interface{}) error {
+func (u *MongoUtil) InsertDocument(collectionName string, document interface{}) (interface{}, error) {
 	collection := u.mongoClient.Database(u.DataBaseName).Collection(collectionName)
-	_, err := collection.InsertOne(context.Background(), document)
+	result, err := collection.InsertOne(context.Background(), document)
 	if err != nil {
-		return fmt.Errorf("插入文档失败: %v", err)
+		return nil, fmt.Errorf("插入文档失败: %v", err)
 	}
-	return nil
+	return result.InsertedID, nil
 }
 
 // 删除文档
