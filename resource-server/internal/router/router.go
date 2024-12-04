@@ -15,6 +15,9 @@ func AddRouter(r *gin.Engine, svc *svc.ServiceContext) *gin.Engine {
 		v1.PUT("/create/post", func(c *gin.Context) {
 			posthandle.CreatePostHandle(c, svc)
 		})
+		v1.GET("get/post", func(c *gin.Context) {
+			posthandle.SearchDetailsHandle(c, svc)
+		})
 
 	}
 	return r // 返回修改后的路由

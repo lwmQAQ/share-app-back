@@ -63,43 +63,45 @@ func (u *MongoUtil) DeleteDocument(collectionName string, filter interface{}) (i
 }
 
 // 查询文档
-func (u *MongoUtil) SearchDocument(collectionName string, filter interface{}) ([]interface{}, error) {
+func (u *MongoUtil) SearchDocument(collectionName string, filter interface{}, resp interface{}) error {
 	collection := u.mongoClient.Database(u.DataBaseName).Collection(collectionName)
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		return nil, fmt.Errorf("查询文档失败: %v", err)
+		return fmt.Errorf("查询文档失败: %v", err)
 	}
 	defer cursor.Close(context.Background())
-
-	var results []interface{}
+	//定义切片
+	var r []interface{}
+	//查询
 	for cursor.Next(context.Background()) {
 		var result interface{}
 		if err := cursor.Decode(&result); err != nil {
-			return nil, fmt.Errorf("解码文档失败: %v", err)
+			return fmt.Errorf("解码文档失败: %v", err)
 		}
-		results = append(results, result)
+		r = append(r, result)
 	}
+	//赋值返回
+	resp = r
 	if err := cursor.Err(); err != nil {
-		return nil, fmt.Errorf("游标错误: %v", err)
+		return fmt.Errorf("游标错误: %v", err)
 	}
-	return results, nil
+	return nil
 }
-func (u *MongoUtil) SearchDocumentByID(collectionName string, id interface{}) (interface{}, error) {
+func (u *MongoUtil) SearchDocumentByID(collectionName string, id interface{}, result interface{}) error {
 	collection := u.mongoClient.Database(u.DataBaseName).Collection(collectionName)
 
 	// 构建过滤条件
 	filter := bson.M{"_id": id}
 
 	// 执行查询
-	var result interface{}
-	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	err := collection.FindOne(context.Background(), filter).Decode(result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("未找到文档: %v", err)
+			return fmt.Errorf("未找到文档: %v", err)
 		}
-		return nil, fmt.Errorf("查询文档失败: %v", err)
+		return fmt.Errorf("查询文档失败: %v", err)
 	}
-	return result, nil
+	return nil
 }
 
 // 更新文档

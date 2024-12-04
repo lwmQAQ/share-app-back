@@ -2,6 +2,7 @@ package posthandle
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"resource-server/internal/server/postserver"
 	"resource-server/internal/svc"
@@ -11,7 +12,11 @@ import (
 )
 
 func SearchDetailsHandle(c *gin.Context, svc *svc.ServiceContext) {
-
+	postId := c.Query("postId")
+	fmt.Println(postId)
+	server := postserver.NewPostServer(context.Background(), svc)
+	resp := server.GetPostById(postId)
+	c.JSON(http.StatusOK, resp)
 }
 
 func CreatePostHandle(c *gin.Context, svc *svc.ServiceContext) {

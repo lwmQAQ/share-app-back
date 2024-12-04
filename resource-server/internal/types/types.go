@@ -52,7 +52,7 @@ type CreatePostResp struct {
 }
 
 type GetPostByIdReq struct {
-	PostID string
+	PostID string `json:"postId"`
 }
 
 type GetPostByIdResp struct {

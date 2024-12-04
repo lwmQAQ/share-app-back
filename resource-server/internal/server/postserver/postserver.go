@@ -84,23 +84,19 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 	return types.Success(&types.CreatePostResp{})
 }
 
-func (s *PostServer) GetPostById(req *types.GetPostByIdReq) types.Response {
+func (s *PostServer) GetPostById(req string) types.Response {
 	//1.TODO 异步更新es
-	resp, err := s.svcCtx.MongoUtil.SearchDocumentByID("Post", req.PostID)
+	// 将 string 转换为 primitive.ObjectID
+	objectID, err := primitive.ObjectIDFromHex(req)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("转换失败: %v", err)
+	}
+	var post models.Post
+	err = s.svcCtx.MongoUtil.SearchDocumentByID("Post", objectID, &post)
 	if err != nil {
 		s.svcCtx.Logger.Errorf("查询mongodb失败 %v", err)
+		return types.Error(ecode.ErrSystemError)
 	}
-	//断言类型转换
-	r := resp.(models.Post)
-	httpresp := &types.GetPostByIdResp{
-		PostID:     r.ID.Hex(),
-		Title:      r.Title,
-		Content:    r.Content,
-		Author:     r.Author,
-		LikesCount: r.LikesCount,
-		CommentNum: int64(len(r.CommentsIDs)),
-		Tags:       r.Tags,
-		UpdatedAt:  r.UpdatedAt,
-	}
-	return types.Success(httpresp)
+
+	return types.Success(post)
 }
