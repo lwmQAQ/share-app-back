@@ -75,3 +75,24 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 	}(postid.(string), s.svcCtx.ESClient, s.svcCtx.Logger)
 	return types.Success(&types.CreatePostResp{})
 }
+
+func (s *PostServer) GetPostById(req *types.GetPostByIdReq) types.Response {
+	//1.异步更新es
+	resp, err := s.svcCtx.MongoUtil.SearchDocumentByID("Post", req.PostID)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("查询mongodb失败 %v", err)
+	}
+	//断言类型转换
+	r := resp.(models.Post)
+	httpresp := &types.GetPostByIdResp{
+		PostID:     r.ID.Hex(),
+		Title:      r.Title,
+		Content:    r.Content,
+		Author:     r.Author,
+		LikesCount: r.LikesCount,
+		CommentNum: int64(len(r.CommentsIDs)),
+		Tags:       r.Tags,
+		UpdatedAt:  r.UpdatedAt,
+	}
+	return types.Success(httpresp)
+}

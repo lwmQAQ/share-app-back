@@ -6,6 +6,7 @@ import (
 	"resource-server/config"
 
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -78,6 +79,23 @@ func (u *MongoUtil) SearchDocument(collectionName string, filter interface{}) ([
 		return nil, fmt.Errorf("游标错误: %v", err)
 	}
 	return results, nil
+}
+func (u *MongoUtil) SearchDocumentByID(collectionName string, id interface{}) (interface{}, error) {
+	collection := u.mongoClient.Database(u.DataBaseName).Collection(collectionName)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+
+	// 执行查询
+	var result interface{}
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("未找到文档: %v", err)
+		}
+		return nil, fmt.Errorf("查询文档失败: %v", err)
+	}
+	return result, nil
 }
 
 // 更新文档

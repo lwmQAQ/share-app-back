@@ -1,6 +1,10 @@
 package types
 
-import "resource-server/internal/ecode"
+import (
+	"resource-server/internal/ecode"
+	"resource-server/internal/models"
+	"time"
+)
 
 type Response struct {
 	Code         int32       `json:"code"`
@@ -45,4 +49,19 @@ type CreatePostReq struct {
 }
 
 type CreatePostResp struct {
+}
+
+type GetPostByIdReq struct {
+	PostID string
+}
+
+type GetPostByIdResp struct {
+	PostID     string      `json:"postId"`                       //资源贴id
+	Title      string      `json:"title"`                        // 帖子标题
+	Content    string      `json:"content"`                      // 富文本内容，HTML 格式
+	Author     models.User `json:"author"`                       // 帖子的作者信息
+	LikesCount int64       `json:"likes_count"`                  // 点赞数
+	CommentNum int64       `json:"CommentNum"`                   //评论数
+	Tags       []string    `json:"tags,omitempty"`               // 帖子标签列表
+	UpdatedAt  time.Time   `bson:"updated_at" json:"updated_at"` // 更新时间
 }
