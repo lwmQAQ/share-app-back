@@ -13,3 +13,9 @@ type Server struct {
 	Host string `yaml:"host"`
 	Port int32  `yaml:"port"`
 }
+
+type MongoConfig struct {
+	Host         string `yaml:"host"`
+	Port         int32  `yaml:"port"`
+	DataBaseName string `yaml:"databaseName"`
+}
