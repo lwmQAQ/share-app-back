@@ -6,3 +6,10 @@ elasticsearch:
   url: https://127.0.0.1:9200
   user: elastic
   password: uLcD-=KZsnPeqXUDGD__
+
+mongo:
+  host: 10.61.145.241
+  port: 27017
+  databaseName: Resource
+  username: root
+  password: example

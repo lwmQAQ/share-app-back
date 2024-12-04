@@ -22,8 +22,16 @@ type ServiceContext struct {
 func NewServerContext() *ServiceContext {
 	logger := middleware.NewLogger()
 	config := config.ReaderConfig(logger)
+	etcd := etcd.NewETCDUtil()
+	es := utils.NewESlient(&config.Elasticsearch)
+	userrpc := rpcclient.NewUserRpcClient(etcd)
+	mongodb := utils.NewMongoUtil(logger, &config.Mongo)
 	return &ServiceContext{
-		Logger:       logger,
-		ServerConfig: config,
+		Logger:        logger,
+		ServerConfig:  config,
+		EtcdUtil:      etcd,
+		ESClient:      es,
+		UserRpcClient: userrpc,
+		MongoUtil:     mongodb,
 	}
 }

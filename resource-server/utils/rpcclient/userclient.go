@@ -21,7 +21,7 @@ type UserRpcClient struct {
 	Servers map[string]*rpcpool.RpcTaskPool
 }
 
-func NewRpcClient(etcdutil *etcd.ETCDUtil) *UserRpcClient {
+func NewUserRpcClient(etcdutil *etcd.ETCDUtil) *UserRpcClient {
 	server := &UserRpcClient{
 		Servers: make(map[string]*rpcpool.RpcTaskPool),
 	}

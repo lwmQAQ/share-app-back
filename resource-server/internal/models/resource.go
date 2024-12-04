@@ -8,5 +8,5 @@ type Resource struct {
 	Tags        []string  `json:"tags"`         // 标签列表
 	PublishTime time.Time `json:"publish_time"` // 发布时间
 	Publisher   string    `json:"publisher"`    // 发布者
-	ClickCount  int       `json:"click_count"`  // 点击量
+	LikeCount   int       `json:"like_count"`   // 点击量
 }

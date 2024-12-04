@@ -20,10 +20,14 @@ func NewRpcUserServer(svc *svc.ServiceContext) *RpcUserServer {
 }
 
 func (s *RpcUserServer) GetUserInfo(ctx context.Context, req *rpc.GetUserInfoReq) (*rpc.GetUserInfoResp, error) {
-	user, err := s.svcCtx.UserInfoCache.Get(uint64(req.Id))
+	user, err := s.svcCtx.UserInfoCache.Get(req.Id)
 	if err != nil {
-		s.svcCtx.Logger.Errorln("查询用户失败", err)
-		return nil, fmt.Errorf("用户不存在")
+		//加入缓存
+		s.svcCtx.Logger.Infof("redis中不存在key%d", req.Id)
+		user, err = s.svcCtx.UserInfoCache.LoadCache(req.Id)
+		if err != nil {
+			return nil, fmt.Errorf("用户不存在")
+		}
 	}
 	return &rpc.GetUserInfoResp{
 		Username: user.Name,

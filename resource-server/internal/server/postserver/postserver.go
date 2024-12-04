@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type PostServer struct {
@@ -58,13 +59,20 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 		s.svcCtx.Logger.Errorf("mongodb出错 %v", err)
 		return types.Error(ecode.ErrSystemError)
 	}
+	// 检查 postid 类型并转换为字符串
+	postidStr, ok := postid.(primitive.ObjectID)
+	if !ok {
+		return types.Error(ecode.ErrSystemError)
+	}
+
+	postidAsString := postidStr.Hex()
 	//4. 异步更新es
 	go func(id string, client *utils.ESClient, logger *logrus.Logger) {
 		//TODO 异步更新es
 		resource := &models.Resource{
 			Title:       post.Title,
 			Tags:        post.Tags,
-			ClickCount:  0,
+			LikeCount:   0,
 			Publisher:   author.Username,
 			PublishTime: time.Now(),
 		}
@@ -72,12 +80,12 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 		if err != nil {
 			logger.Errorf("es插入出错 %v", err)
 		}
-	}(postid.(string), s.svcCtx.ESClient, s.svcCtx.Logger)
+	}(postidAsString, s.svcCtx.ESClient, s.svcCtx.Logger)
 	return types.Success(&types.CreatePostResp{})
 }
 
 func (s *PostServer) GetPostById(req *types.GetPostByIdReq) types.Response {
-	//1.异步更新es
+	//1.TODO 异步更新es
 	resp, err := s.svcCtx.MongoUtil.SearchDocumentByID("Post", req.PostID)
 	if err != nil {
 		s.svcCtx.Logger.Errorf("查询mongodb失败 %v", err)

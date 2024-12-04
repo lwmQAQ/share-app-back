@@ -17,7 +17,11 @@ type MongoUtil struct {
 }
 
 func NewMongoUtil(logger *logrus.Logger, MongoConfig *config.MongoConfig) *MongoUtil {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	// 格式化连接地址，包含用户名和密码
+	addr := fmt.Sprintf("mongodb://%s:%s@%s:%d",
+		MongoConfig.UserName, MongoConfig.Password, MongoConfig.Host, MongoConfig.Port)
+	fmt.Println(addr)
+	clientOptions := options.Client().ApplyURI(addr)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		logger.Errorf("mongodb连接错误 %v", err)

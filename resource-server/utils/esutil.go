@@ -162,26 +162,38 @@ func (e *ESClient) SearchByID(index string, docID string, result interface{}) er
 }
 
 // 向索引插入数据
+// 向索引插入数据
 func (e *ESClient) InsertDocument(index string, document interface{}, docID string) error {
+	fmt.Println(index, docID)
+
 	// 将结构体编码为 JSON
 	docJSON, err := json.Marshal(document)
 	if err != nil {
-		log.Fatalf("Error marshaling document: %s", err)
-		return err
+		// 这里返回错误而不是直接终止程序
+		return fmt.Errorf("Error marshaling document: %s", err)
 	}
-	// 插入文档
-	_, err = e.client.Index(
+	// 输出 JSON 字符串以查看内容
+	fmt.Printf("json: %s\n", docJSON)
+
+	response, err := e.client.Index(
 		index,
 		bytes.NewReader(docJSON),
 		e.client.Index.WithDocumentID(docID),
-		e.client.Index.WithRefresh("true"), // 可选：刷新索引，使文档可搜索
+		e.client.Index.WithRefresh("true"),
 	)
 	if err != nil {
-		log.Fatalf("插入文档失败: %s", err)
+		fmt.Printf("插入文档失败: %s", err)
 		return err
 	}
-	return nil
+	defer response.Body.Close()
 
+	if response.IsError() {
+		fmt.Printf("Elasticsearch 错误: %s", response.String())
+		return fmt.Errorf("elasticsearch error: %s", response.String())
+	}
+
+	fmt.Println("文档插入成功")
+	return nil
 }
 
 /*

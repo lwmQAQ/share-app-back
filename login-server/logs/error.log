@@ -4,3 +4,4 @@
 {"level":"error","msg":"Failed to bind JSON: 参数验证错误: [字段 'Email' 验证失败，原因: 是必填的]","time":"2024-12-03T15:52:12+08:00"}
 {"level":"error","msg":"发送邮箱工具失败：dial tcp :0: connectex: The requested address is not valid in its context.","time":"2024-12-03T15:52:54+08:00"}
 {"level":"error","msg":"查询用户失败 键 resource:userInfo:uid_0 在Redis中不存在","time":"2024-12-03T20:32:06+08:00"}
+{"level":"error","msg":"查询用户失败 键 resource:userInfo:uid_20000 在Redis中不存在","time":"2024-12-04T20:56:26+08:00"}

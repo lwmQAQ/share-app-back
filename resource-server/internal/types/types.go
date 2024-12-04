@@ -42,10 +42,10 @@ func ErrorMsg(msg string) Response {
 }
 
 type CreatePostReq struct {
-	UserID  uint64
-	Title   string
-	Tags    []string
-	Content string
+	UserID  uint64   `json:"userId"`
+	Title   string   `json:"title"`
+	Tags    []string `json:"tags"`
+	Content string   `json:"content"`
 }
 
 type CreatePostResp struct {

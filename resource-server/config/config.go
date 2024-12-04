@@ -1,8 +1,9 @@
 package config
 
 type ServerConfig struct {
-	Server        Server   `yaml:"server"`
-	Elasticsearch ESConfig `yaml:"elasticsearch"`
+	Server        Server      `yaml:"server"`
+	Elasticsearch ESConfig    `yaml:"elasticsearch"`
+	Mongo         MongoConfig `yaml:"mongo"`
 }
 type ESConfig struct {
 	Url      string `yaml:"url"`
@@ -18,4 +19,6 @@ type MongoConfig struct {
 	Host         string `yaml:"host"`
 	Port         int32  `yaml:"port"`
 	DataBaseName string `yaml:"databaseName"`
+	UserName     string `yaml:"username"`
+	Password     string `yaml:"password"`
 }
