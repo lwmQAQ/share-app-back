@@ -1,0 +1,5 @@
+package resourcehandle
+
+func SearchHanle() {
+
+}

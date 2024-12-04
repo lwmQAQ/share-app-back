@@ -1,0 +1,106 @@
+
+PUT /resource_index
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "custom_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "custom_analyzer"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "publish_time": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd HH:mm:ss||epoch_millis"
+      },
+      "publisher": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+
+
+
+========================================插入================================================
+
+
+
+
+POST /resource_index/_doc
+{
+  "title": "Elasticsearch资源查询指南",
+  "tags": ["Elasticsearch", "教程", "查询"],
+  "publish_time": "2024-12-03T14:30:00",
+  "publisher": "admin"
+}
+
+
+
+========================================全文搜索================================================
+
+
+
+
+GET /resource_index/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "资源查询" } }
+      ],
+      "filter": [
+        { "term": { "tags": "Elasticsearch" } },
+        {
+          "range": {
+            "publish_time": {
+              "gte": "2024-12-01T00:00:00",
+              "lte": "2024-12-03T23:59:59"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+========================================全文搜索================================================
+
+
+GET /resource_index/_search
+{
+  "query": {
+    "match": {
+      "title": "指南"
+    }
+  }
+}
+
+
+
+
+GET /resource_index/_search
+{
+  "query": {
+    "term": {
+      "tags": "Elasticsearch"
+    }
+  }
+}
