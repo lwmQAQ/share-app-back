@@ -17,5 +17,7 @@ func BuildInsertPost(author *models.User, req *types.CreatePostReq) *models.Post
 		CommentsIDs: nil,
 		CreatedAt:   t,
 		UpdatedAt:   t,
+		Type:        req.Type,
+		Link:        req.Link,
 	}
 }

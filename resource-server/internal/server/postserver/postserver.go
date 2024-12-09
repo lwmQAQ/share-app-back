@@ -53,6 +53,11 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 
 	//2.TODO异步增加用户经验
 	//3.插入mongo文档
+	link, err := s.svcCtx.UrlUtil.CreateShortLink(req.Link)
+	if err != nil {
+		return types.Error(ecode.ErrSystemError)
+	}
+	req.Link = link
 	post := adapter.BuildInsertPost(author, req)
 	postid, err := s.svcCtx.MongoUtil.InsertDocument("Post", post)
 	if err != nil {
@@ -68,7 +73,6 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 	postidAsString := postidStr.Hex()
 	//4. 异步更新es
 	go func(id string, client *utils.ESClient, logger *logrus.Logger) {
-		//TODO 异步更新es
 		resource := &models.Resource{
 			Title:       post.Title,
 			Tags:        post.Tags,

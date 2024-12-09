@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"fmt"
 	"resource-server/config"
 	"resource-server/middleware"
 	"resource-server/utils"
@@ -17,6 +18,8 @@ type ServiceContext struct {
 	ESClient      *utils.ESClient
 	UserRpcClient *rpcclient.UserRpcClient
 	MongoUtil     *utils.MongoUtil
+	RedisUtil     *utils.RedisUtil
+	UrlUtil       *utils.UrlUtil
 }
 
 func NewServerContext() *ServiceContext {
@@ -26,6 +29,9 @@ func NewServerContext() *ServiceContext {
 	es := utils.NewESlient(&config.Elasticsearch)
 	userrpc := rpcclient.NewUserRpcClient(etcd)
 	mongodb := utils.NewMongoUtil(logger, &config.Mongo)
+	redisutil := utils.NewRedisUtil(&config.Redis)
+	baseUrl := fmt.Sprintf("%s:%d/path/", config.Server.Host, config.Server.Port)
+	urlutil := utils.NewUrlUtils(redisutil, baseUrl)
 	return &ServiceContext{
 		Logger:        logger,
 		ServerConfig:  config,
@@ -33,5 +39,7 @@ func NewServerContext() *ServiceContext {
 		ESClient:      es,
 		UserRpcClient: userrpc,
 		MongoUtil:     mongodb,
+		RedisUtil:     redisutil,
+		UrlUtil:       urlutil,
 	}
 }

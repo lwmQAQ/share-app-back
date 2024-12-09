@@ -45,7 +45,9 @@ type CreatePostReq struct {
 	UserID  uint64   `json:"userId"`
 	Title   string   `json:"title"`
 	Tags    []string `json:"tags"`
+	Type    int      `json:"type"`
 	Content string   `json:"content"`
+	Link    string   `json:"link"`
 }
 
 type CreatePostResp struct {
