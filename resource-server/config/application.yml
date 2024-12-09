@@ -13,3 +13,17 @@ mongo:
   databaseName: Resource
   username: root
   password: example
+
+mysql:
+  host: 10.61.145.241
+  port: 3306
+  dbName: ResourceShare
+  user: root
+  password: "0618"
+
+redis:
+  host: 10.61.145.241
+  dbName: 1
+  port: 6379
+  user: root
+  password: "0618"

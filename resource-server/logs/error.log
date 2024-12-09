@@ -6,3 +6,5 @@
 {"level":"error","msg":"查询mongodb失败 未找到文档: mongo: no documents in result","time":"2024-12-04T22:22:51+08:00"}
 {"level":"error","msg":"查询mongodb失败 未找到文档: mongo: no documents in result","time":"2024-12-04T22:26:54+08:00"}
 {"level":"error","msg":"查询mongodb失败 未找到文档: mongo: no documents in result","time":"2024-12-04T22:28:29+08:00"}
+{"level":"error","msg":"es插入出错 dial tcp 127.0.0.1:9200: connectex: No connection could be made because the target machine actively refused it.","time":"2024-12-09T21:34:07+08:00"}
+{"level":"error","msg":"es插入出错 dial tcp 127.0.0.1:9200: connectex: No connection could be made because the target machine actively refused it.","time":"2024-12-09T21:45:41+08:00"}

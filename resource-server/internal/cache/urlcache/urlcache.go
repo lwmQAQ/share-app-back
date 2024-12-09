@@ -12,13 +12,13 @@ import (
 
 type UrlCache struct {
 	redisClient *redisutils.RedisUtil
-	urlDao      dao.UrlDao
+	UrlDao      dao.UrlDao
 }
 
 func NewUrlCache(redisClient *redisutils.RedisUtil, urlDao dao.UrlDao) *UrlCache {
 	return &UrlCache{
 		redisClient: redisClient,
-		urlDao:      urlDao,
+		UrlDao:      urlDao,
 	}
 }
 
@@ -41,7 +41,7 @@ func (c *UrlCache) Set(value *models.Url, expiration time.Duration) error {
 }
 
 func (c *UrlCache) LoadCache(code string) (*string, error) {
-	url, err := c.urlDao.GetUrlByCode(code)
+	url, err := c.UrlDao.GetUrlByCode(code)
 	if err != nil { //数据库查询不到就写入一个空缓存防止击穿
 		err = c.Set(url, 0) //永不过期
 		if err != nil {

@@ -23,7 +23,14 @@ func NewUrlUtils(baseurl string, urlCache *urlcache.UrlCache) *UrlUtil {
 
 func (u *UrlUtil) CreateShortLink(sourceUrl string) (string, error) {
 	code := u.linkcodecreate(sourceUrl, 6)
-	err := u.urlCache.Set(&models.Url{
+	err := u.urlCache.UrlDao.CreateUrl(&models.Url{
+		Code:      code,
+		SourceURL: sourceUrl,
+	})
+	if err != nil {
+		return "", err
+	}
+	err = u.urlCache.Set(&models.Url{
 		Code:      code,
 		SourceURL: sourceUrl,
 	}, 0)

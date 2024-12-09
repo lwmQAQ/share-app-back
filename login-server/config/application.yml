@@ -14,8 +14,6 @@ etcd:
   timeout: 5 #最大时间
 
 
-
-
 jwt:
   key: lwmhaoshuai
 
