@@ -1,50 +1,45 @@
-package utils
+package urlutils
 
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
-	"resource-server/internal/constants"
 
-	"time"
+	"resource-server/internal/cache/urlcache"
+	"resource-server/internal/models"
 )
 
 type UrlUtil struct {
-	BaseUrl   string
-	Redisutil *RedisUtil
+	BaseUrl  string
+	urlCache *urlcache.UrlCache
 }
 
-func NewUrlUtils(redis *RedisUtil, baseurl string) *UrlUtil {
+func NewUrlUtils(baseurl string, urlCache *urlcache.UrlCache) *UrlUtil {
 	return &UrlUtil{
-		BaseUrl:   baseurl,
-		Redisutil: redis,
+		BaseUrl:  baseurl,
+		urlCache: urlCache,
 	}
 
 }
 
 func (u *UrlUtil) CreateShortLink(sourceUrl string) (string, error) {
 	code := u.linkcodecreate(sourceUrl, 6)
-	key := constants.BuildUrlKey(code)
-	//可以增加重试机制
-	err := u.Redisutil.CreateJsonCache(key, sourceUrl, 10*time.Hour)
+	err := u.urlCache.Set(&models.Url{
+		Code:      code,
+		SourceURL: sourceUrl,
+	}, 0)
 	if err != nil {
-		fmt.Println("生成短链失败")
 		return "", err
 	}
-	return fmt.Sprintf("%s%s", u.BaseUrl, code), nil
-
+	return code, nil
 }
 
 func (u *UrlUtil) GetSourceUrl(code string) (string, error) {
-	key := constants.BuildUrlKey(code)
-	var sourceurl string
-	err := u.Redisutil.GetJsonDataByKey(key, &sourceurl)
-	//TODO 加入数据持久化
+	url, err := u.urlCache.Get(code)
 	if err != nil {
-		fmt.Println("短链接失效")
 		return "", err
 	}
-	return sourceurl, nil
+	return *url, err
+
 }
 
 func (u *UrlUtil) linkcodecreate(url string, length int) string {
