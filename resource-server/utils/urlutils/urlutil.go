@@ -3,6 +3,7 @@ package urlutils
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 
 	"resource-server/internal/cache/urlcache"
 	"resource-server/internal/models"
@@ -37,7 +38,7 @@ func (u *UrlUtil) CreateShortLink(sourceUrl string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return code, nil
+	return fmt.Sprintf("%s/%s", u.BaseUrl, code), nil
 }
 
 func (u *UrlUtil) GetSourceUrl(code string) (string, error) {

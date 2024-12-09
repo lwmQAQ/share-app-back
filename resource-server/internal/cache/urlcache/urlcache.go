@@ -23,9 +23,12 @@ func NewUrlCache(redisClient *redisutils.RedisUtil, urlDao dao.UrlDao) *UrlCache
 }
 
 func (c *UrlCache) Get(code string) (*string, error) {
-	var sourceURL *string
+	var sourceURL = new(string) // 初始化指针
+
+	fmt.Println(constants.BuildUrlKey(code))
 	err := c.redisClient.GetJsonDataByKey(constants.BuildUrlKey(code), sourceURL)
 	if err != nil {
+		fmt.Println(err)
 		sourceURL, err = c.LoadCache(code)
 		if err != nil {
 			return nil, err

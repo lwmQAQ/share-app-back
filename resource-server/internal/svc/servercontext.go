@@ -32,14 +32,13 @@ func NewServerContext() *ServiceContext {
 	config := config.ReaderConfig(logger)
 	db := mysqldb.NewMysql(&config.Mysql)
 	urldao := dao.NewUrlDaoImpl(db)
-
 	etcd := etcd.NewETCDUtil()
 	es := utils.NewESlient(&config.Elasticsearch)
 	userrpc := rpcclient.NewUserRpcClient(etcd)
 	mongodb := utils.NewMongoUtil(logger, &config.Mongo)
 	redisutil := redisutils.NewRedisUtil(&config.Redis)
 	UrlCache := urlcache.NewUrlCache(redisutil, urldao)
-	baseUrl := fmt.Sprintf("%s:%d/path/", config.Server.Host, config.Server.Port)
+	baseUrl := fmt.Sprintf("%s:%d/path", config.Server.Host, config.Server.Port)
 	urlutil := urlutils.NewUrlUtils(baseUrl, UrlCache)
 	return &ServiceContext{
 		Logger:        logger,
