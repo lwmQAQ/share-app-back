@@ -19,9 +19,11 @@ func NewRedisUtil(redisConfig *config.RedisConfig) *RedisUtil {
 	addr := fmt.Sprintf("%s:%d", redisConfig.Host, redisConfig.Port)
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     addr,                 // Redis服务器地址
-		Password: redisConfig.Password, // Redis密码，如果没有可以留空
-		DB:       redisConfig.DBName,   // Redis数据库编号
+		Addr:         addr,                 // Redis服务器地址
+		Password:     redisConfig.Password, // Redis密码，如果没有可以留空
+		DB:           redisConfig.DBName,   // Redis数据库编号
+		PoolSize:     10,                   // 设置连接池中最大连接数
+		MinIdleConns: 3,                    // 设置最小空闲连接数
 	})
 	if err := client.Ping().Err(); err != nil {
 		log.Fatalf("无法连接到Redis: %v", err)
