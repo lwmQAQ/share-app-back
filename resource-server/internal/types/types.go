@@ -53,6 +53,17 @@ type CreatePostReq struct {
 type CreatePostResp struct {
 }
 
+// 创建评论
+type CreateCommentReq struct {
+	UserID   uint64  `json:"userId"`
+	PostID   uint64  `json:"postId" validate:"required"`                // 所属帖子 ID，必填
+	ParentID *uint64 `json:"parentId,omitempty"`                        // 父评论 ID，可选
+	Content  string  `json:"content" validate:"required,min=1,max=500"` // 评论内容，必填，限制长度
+}
+
+type CreateCommentResp struct {
+}
+
 type GetPostByIdReq struct {
 	PostID string `json:"postId"`
 }

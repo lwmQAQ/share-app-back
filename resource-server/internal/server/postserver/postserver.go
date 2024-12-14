@@ -52,7 +52,7 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 		ID:       resp.Id,
 	}
 
-	//2.TODO异步增加用户经验
+	//2.TODO 异步增加用户经验
 	//3.插入mongo文档
 	link, err := s.svcCtx.UrlUtil.CreateShortLink(req.Link)
 	if err != nil {

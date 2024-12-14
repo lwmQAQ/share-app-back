@@ -15,7 +15,7 @@ type Post struct {
 	LikesCount  int64                `bson:"likes_count" json:"likes_count"`                       // 点赞数
 	CommentsIDs []primitive.ObjectID `bson:"comments_ids,omitempty" json:"comments_ids,omitempty"` // 评论的 ObjectID 列表
 	Type        int                  `bson:"type" json:"type,omitempty"`                           // 资源类型  1、是bt文件 2、是网盘资源
-	Link        string               `bson:"link" json:"link,omitempty"`                           // 资源连接
+	Link        string               `bson:"link" json:"link,omitempty"`                           // 资源连接 如果是种子文件前端会上传文件然后返回一个url
 	Tags        []string             `bson:"tags,omitempty" json:"tags,omitempty"`                 // 帖子标签列表
 	CreatedAt   time.Time            `bson:"created_at" json:"created_at"`                         // 创建时间
 	UpdatedAt   time.Time            `bson:"updated_at" json:"updated_at"`                         // 更新时间
