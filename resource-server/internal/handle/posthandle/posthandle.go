@@ -7,6 +7,7 @@ import (
 	"resource-server/internal/server/postserver"
 	"resource-server/internal/svc"
 	"resource-server/internal/types"
+	"resource-server/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +27,11 @@ func CreatePostHandle(c *gin.Context, svc *svc.ServiceContext) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-	// TODO 参数校验
+	//  参数校验
+	err := middleware.ValidateStruct(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "参数不符合规格")
+	}
 	server := postserver.NewPostServer(context.Background(), svc)
 	resp := server.CreatePost(req)
 	c.JSON(http.StatusOK, resp)

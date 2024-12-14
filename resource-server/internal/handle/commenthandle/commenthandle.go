@@ -6,6 +6,7 @@ import (
 	"resource-server/internal/server/commentserver"
 	"resource-server/internal/svc"
 	"resource-server/internal/types"
+	"resource-server/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,12 @@ func CreateCommentHandle(c *gin.Context, svc *svc.ServiceContext) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-	// TODO 参数校验
+
+	//  参数校验
+	err := middleware.ValidateStruct(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "参数不符合规格")
+	}
 	server := commentserver.NewCommentServer(context.Background(), svc)
 	resp := server.CreateComment(req, req.UserID)
 	c.JSON(http.StatusOK, resp)
