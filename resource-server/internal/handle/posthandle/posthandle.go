@@ -36,3 +36,10 @@ func CreatePostHandle(c *gin.Context, svc *svc.ServiceContext) {
 func DeletePostHandle(c *gin.Context, svc *svc.ServiceContext) {
 
 }
+
+func LikePostHandle(c *gin.Context, svc *svc.ServiceContext) {
+	postId := c.Query("postId")
+	server := postserver.NewPostServer(context.Background(), svc)
+	resp := server.LikePost(postId)
+	c.JSON(http.StatusOK, resp)
+}

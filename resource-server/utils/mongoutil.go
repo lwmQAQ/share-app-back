@@ -106,7 +106,7 @@ func (u *MongoUtil) SearchDocumentByID(collectionName string, id interface{}, re
 
 // 更新文档
 func (u *MongoUtil) UpdateDocument(collectionName string, filter interface{}, update interface{}) (int64, error) {
-	collection := u.mongoClient.Database("your_database_name").Collection(collectionName)
+	collection := u.mongoClient.Database("Resource").Collection(collectionName)
 	result, err := collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return 0, fmt.Errorf("更新文档失败: %v", err)

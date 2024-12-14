@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -103,4 +104,27 @@ func (s *PostServer) GetPostById(req string) types.Response {
 	}
 
 	return types.Success(post)
+}
+
+func (s *PostServer) LikePost(postId string) types.Response {
+	// 修改mongo数据库
+	objectID, err := primitive.ObjectIDFromHex(postId)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("转换失败: %v", err)
+	}
+	// 定义更新条件和更新内容
+	filter := bson.M{"_id": objectID}
+	update := bson.M{
+		"$inc": bson.M{"likes": 1}, // 示例：将 likes 字段加 1
+	}
+
+	// 执行更新操作
+	_, err = s.svcCtx.MongoUtil.UpdateDocument("Post", filter, update)
+	if err != nil {
+		s.svcCtx.Logger.Errorf("更新失败: %v", err)
+		return types.Error(ecode.ErrSystemError)
+	}
+
+	//1.TODO 异步更新es
+	return types.Success(nil)
 }
