@@ -6,6 +6,7 @@ import (
 	"log"
 	"resource-server/config"
 	"resource-server/internal/models"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,9 +23,15 @@ func NewMongoUtil(logger *logrus.Logger, MongoConfig *config.MongoConfig) *Mongo
 	// 格式化连接地址，包含用户名和密码
 	addr := fmt.Sprintf("mongodb://%s:%s@%s:%d",
 		MongoConfig.UserName, MongoConfig.Password, MongoConfig.Host, MongoConfig.Port)
-	fmt.Println(addr)
-	clientOptions := options.Client().ApplyURI(addr)
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+
+	// 创建 ClientOptions 并设置连接池参数
+	clientOpts := options.Client().
+		ApplyURI(addr).
+		SetMaxPoolSize(50).                  // 最大连接数
+		SetMinPoolSize(10).                  // 最小连接数
+		SetMaxConnIdleTime(30 * time.Second) // 空闲连接的最大存活时间
+
+	client, err := mongo.Connect(context.TODO(), clientOpts)
 	if err != nil {
 		logger.Errorf("mongodb连接错误 %v", err)
 		return nil

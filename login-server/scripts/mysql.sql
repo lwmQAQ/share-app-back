@@ -1,4 +1,4 @@
-create Database ResourceShare;
+CREATE DATABASE ResourceShare;
 
 USE ResourceShare;
 
@@ -14,6 +14,7 @@ CREATE TABLE
         `update_time` datetime (3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改时间',
         `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户邮箱',
         `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户密码',
+        `bio` TEXT DEFAULT NULL COMMENT '个人简介',
         PRIMARY KEY (`id`) USING BTREE,
         UNIQUE KEY `uniq_email` (`email`) USING BTREE,
         KEY `idx_create_time` (`create_time`) USING BTREE,

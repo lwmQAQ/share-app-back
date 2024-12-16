@@ -2,28 +2,24 @@ server:
   host: 127.0.0.1
   port: 8083
 
-elasticsearch:
-  url: https://127.0.0.1:9200
-  user: elastic
-  password: uLcD-=KZsnPeqXUDGD__
 
 mongo:
-  host: 10.61.145.241
+  host: 10.62.216.29
   port: 27017
   databaseName: Resource
   username: root
   password: example
 
 mysql:
-  host: 10.61.145.241
+  host: 10.62.216.29
   port: 3306
   dbName: ResourceShare
   user: root
-  password: "0618"
+  password: "lwm"
 
 redis:
-  host: 10.61.145.241
+  host: 10.62.216.29
   dbName: 1
   port: 6379
   user: root
-  password: "0618"
+  password: 
