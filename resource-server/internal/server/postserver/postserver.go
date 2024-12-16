@@ -2,17 +2,13 @@ package postserver
 
 import (
 	"context"
-	"resource-server/internal/constants"
 	"resource-server/internal/ecode"
 	"resource-server/internal/models"
 	"resource-server/internal/models/adapter"
 	"resource-server/internal/rpcclient/userclient"
 	"resource-server/internal/svc"
 	"resource-server/internal/types"
-	"resource-server/utils"
-	"time"
 
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -65,32 +61,11 @@ func (s *PostServer) CreatePost(req *types.CreatePostReq) types.Response {
 		s.svcCtx.Logger.Errorf("mongodb出错 %v", err)
 		return types.Error(ecode.ErrSystemError)
 	}
-	// 检查 postid 类型并转换为字符串
-	postidStr, ok := postid.(primitive.ObjectID)
-	if !ok {
-		return types.Error(ecode.ErrSystemError)
-	}
 
-	postidAsString := postidStr.Hex()
-	//4. 异步更新es
-	go func(id string, client *utils.ESClient, logger *logrus.Logger) {
-		resource := &models.Resource{
-			Title:       post.Title,
-			Tags:        post.Tags,
-			LikeCount:   0,
-			Publisher:   author.Username,
-			PublishTime: time.Now(),
-		}
-		err := client.InsertDocument(constants.ResourceIndex, resource, id)
-		if err != nil {
-			logger.Errorf("es插入出错 %v", err)
-		}
-	}(postidAsString, s.svcCtx.ESClient, s.svcCtx.Logger)
-	return types.Success(&types.CreatePostResp{})
+	return types.Success(postid)
 }
 
 func (s *PostServer) GetPostById(req string) types.Response {
-	//1.TODO 异步更新es
 	// 将 string 转换为 primitive.ObjectID
 	objectID, err := primitive.ObjectIDFromHex(req)
 	if err != nil {
@@ -125,6 +100,5 @@ func (s *PostServer) LikePost(postId string) types.Response {
 		return types.Error(ecode.ErrSystemError)
 	}
 
-	//1.TODO 异步更新es
 	return types.Success(nil)
 }

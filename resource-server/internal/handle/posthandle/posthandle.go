@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"resource-server/internal/ecode"
 	"resource-server/internal/server/postserver"
 	"resource-server/internal/svc"
 	"resource-server/internal/types"
@@ -11,6 +12,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+func SearchHandle(c *gin.Context, svc *svc.ServiceContext) {
+	input := c.Query("input")
+	resp, err := svc.MongoUtil.FullSearch(input, "Post")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.Error(ecode.ErrSystemError))
+	}
+	c.JSON(http.StatusOK, types.Success(resp))
+}
 
 func SearchDetailsHandle(c *gin.Context, svc *svc.ServiceContext) {
 	postId := c.Query("postId")

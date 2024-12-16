@@ -3,7 +3,9 @@ package utils
 import (
 	"context"
 	"fmt"
+	"log"
 	"resource-server/config"
+	"resource-server/internal/models"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -112,4 +114,38 @@ func (u *MongoUtil) UpdateDocument(collectionName string, filter interface{}, up
 		return 0, fmt.Errorf("更新文档失败: %v", err)
 	}
 	return result.ModifiedCount, nil
+}
+
+func (u *MongoUtil) FullSearch(searchTerm string, collectionName string) ([]*models.Resource, error) {
+	collection := u.mongoClient.Database("Resource").Collection(collectionName)
+	// 设置查询选项，限制返回前10个结果
+	findOptions := options.Find().SetLimit(10)
+	// 定义投影，指定只返回 "name" 字段 `bson:"updated_at" json:"updated_at"`
+	// Post 表示一个帖子
+
+	projection := bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "updated_at", Value: 1}, {Key: "tags", Value: 1}} // 1表示包含此字段
+	cursor, err := collection.Find(
+		context.Background(),
+		bson.D{{Key: "$text", Value: bson.D{{Key: "$search", Value: searchTerm}}}},
+		findOptions.SetProjection(projection), // 设置投影
+	)
+	if err != nil {
+		log.Fatalf("Failed to execute text search: %v", err)
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var results []*models.Resource
+	// 迭代查询结果并输出
+	for cursor.Next(context.Background()) {
+		var result = new(models.Resource)
+		if err := cursor.Decode(result); err != nil {
+			log.Fatalf("Failed to decode document: %v", err)
+			return nil, err
+		}
+		fmt.Println(result)
+		results = append(results, result)
+	}
+
+	return results, nil
 }
