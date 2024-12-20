@@ -19,7 +19,7 @@ func NewUserDaoImpl(db *gorm.DB) UserDao {
 }
 
 func (d *UserDaoImpl) GetUserByEmail(email string) (*models.User, error) {
-	var user *models.User
+	var user = new(models.User)
 	if err := d.db.Where("email = ?", email).First(user).Error; err != nil {
 		return nil, err
 	}

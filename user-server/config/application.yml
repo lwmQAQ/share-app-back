@@ -1,5 +1,5 @@
 server:
-  host: 127.0.0.1
+  host: 10.62.37.21
   port: 8080
 
 rpcserver:
@@ -25,15 +25,15 @@ email:
   from: "3191711818@qq.com"
 
 redis:
-  host: 10.61.145.241
+  host: 10.62.216.29
   dbName: 1
   port: 6379
   user: root
-  password: "0618"
+  password: 
 
 mysql:
-  host: 10.61.145.241
+  host: 10.62.216.29
   port: 3306
   dbName: ResourceShare
   user: root
-  password: "0618"
+  password: "lwm"

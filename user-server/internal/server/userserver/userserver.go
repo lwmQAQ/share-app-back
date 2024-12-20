@@ -67,7 +67,6 @@ func (s *UserServer) LoginByCode(req *types.LoginCodeReq, ip string) types.Respo
 }
 
 func (s *UserServer) Login(req *types.LoginReq, ip string) types.Response {
-
 	user, err := s.svcCtx.UserDao.GetUserByEmail(req.Email)
 	if err != nil {
 		return types.Error(ecode.ErrUserNotFound)

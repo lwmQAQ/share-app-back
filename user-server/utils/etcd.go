@@ -58,8 +58,8 @@ func (etcd *ETCDUtil) RegisterService(serviceKey string, serviceAddr string, ttl
 			log.Fatalf("Failed to set up lease keep-alive: %v", err)
 		}
 
-		for keepAliveResp := range ch {
-			log.Printf("Keep-alive response for %s - lease ID: %v, TTL: %d", serviceKey, keepAliveResp.ID, keepAliveResp.TTL)
+		for range ch {
+			continue
 		}
 		log.Printf("Lease keep-alive channel closed for service: %s", serviceAddr)
 	}()
