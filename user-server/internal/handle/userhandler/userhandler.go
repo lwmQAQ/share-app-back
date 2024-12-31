@@ -2,7 +2,6 @@ package userhandler
 
 import (
 	"context"
-	"fmt"
 	"user-server/internal/ecode"
 	"user-server/internal/server/userserver"
 	"user-server/internal/svc"
@@ -15,14 +14,11 @@ import (
 )
 
 func GetUserInfoHandler(c *gin.Context, svc *svc.ServiceContext) {
-
 	userId, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusBadRequest, types.Error(ecode.ErrUserNotExist))
 		return
 	}
-	fmt.Println("id", userId)
-
 	userIdUint64, ok := userId.(uint64)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, types.Error(ecode.ErrUserNotExist))
@@ -34,7 +30,7 @@ func GetUserInfoHandler(c *gin.Context, svc *svc.ServiceContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func LoginByCoderHandler(c *gin.Context, svc *svc.ServiceContext) {
+func LoginByCodeHandler(c *gin.Context, svc *svc.ServiceContext) {
 	ip := c.ClientIP()
 	var req = new(types.LoginCodeReq) // 初始化结构体指针
 	// 1. 绑定 JSON 到结构体
@@ -132,5 +128,17 @@ func UpdateUserHandler(c *gin.Context, svc *svc.ServiceContext) {
 	}
 	server := userserver.NewUserServer(context.Background(), svc)
 	resp := server.UpdateUser(req)
+	c.JSON(http.StatusOK, resp)
+}
+
+func GetUpdatePasswordUrlHandler(c *gin.Context, svc *svc.ServiceContext) {
+	email := c.Query("email")
+	// 检查 email 是否为空
+	if email == "" {
+		c.JSON(400, gin.H{"error": "Email is required"})
+		return
+	}
+	server := userserver.NewUserServer(context.Background(), svc)
+	resp := server.CreateUpdatePasswordUrl(email)
 	c.JSON(http.StatusOK, resp)
 }

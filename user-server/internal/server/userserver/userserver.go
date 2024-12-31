@@ -2,6 +2,10 @@ package userserver
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
+	"net/url"
 	"user-server/internal/constant"
 	"user-server/internal/ecode"
 	"user-server/internal/models/adapter"
@@ -11,6 +15,7 @@ import (
 
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -179,4 +184,51 @@ func (s *UserServer) UpdateUser(update *types.UpdateUserReq) types.Response {
 		s.svcCtx.Logger.Errorf("缓存出错 %v", err)
 	}
 	return types.Success(types.UpdateUserResp{})
+}
+
+func (s *UserServer) CreateUpdatePasswordUrl(email string) types.Response {
+	encryptID := encrypt(email)
+	newUUID := uuid.New()
+	link := "http://localhost:5173/forget?"
+	// 一些欺骗性路径参数
+	params := url.Values{}
+	params.Add("token", "1234567890abcdef")       // 欺骗性令牌
+	params.Add("user_id", newUUID.String())       // 伪造的用户ID（例如管理员）
+	params.Add("redirect_url", encryptID)         // 看似合法的重定向链接
+	params.Add("verification_code", "9876543210") // 看似验证码的参数
+	params.Add("action", "reset")                 // 表示操作的参数，通常与密码重置有关
+	// 拼接最终链接
+	fullLink := link + params.Encode()
+	err := s.svcCtx.RedisUtil.CreateJsonCache(constant.BuildForgetKey(email), newUUID.String(), constant.FORGET_EX)
+	if err != nil {
+		return types.ErrorMsg("系统错误")
+	}
+	err = s.svcCtx.Emailutil.SendHTMLEmail("用户", fullLink, email)
+	if err != nil {
+		return types.ErrorMsg("系统错误")
+	}
+	return types.Success(nil)
+}
+
+// encrypt 函数将输入的数据加密并返回一个 20 位的哈希结果
+func encrypt(value interface{}) string {
+	// 将输入转换为字符串
+	strValue := fmt.Sprintf("%v", value)
+
+	// 使用 SHA-256 进行哈希
+	hash := sha256.New()
+	hash.Write([]byte(strValue))
+
+	// 获取哈希值的字节切片
+	hashBytes := hash.Sum(nil)
+
+	// 将哈希值转换为十六进制字符串
+	hashHex := hex.EncodeToString(hashBytes)
+
+	// 截取前 20 个字符
+	if len(hashHex) > 20 {
+		hashHex = hashHex[:20]
+	}
+
+	return hashHex
 }

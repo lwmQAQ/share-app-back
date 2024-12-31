@@ -12,10 +12,12 @@ const CODE_STRING = "code:email_"
 const TASK_STRING = "task:uuid_"
 const FUNC_STRING = "func:uid_"
 const Theme_STRING = "theme:type_"
+const FORGET = "forget:email_"
 const Limit_STRING = "limit:ip_"
 const USER_TOKEN_EX = 5 * 24 * time.Hour
 const USER_INFO_EX = 15 * time.Minute
 const FUNC_EX = 15 * time.Minute
+const FORGET_EX = 30 * time.Minute
 
 func BuildCodeKey(email string) string {
 	return fmt.Sprintf("%s%s%s", BASEKEY, CODE_STRING, email)
@@ -38,4 +40,8 @@ func BuildLimitKey(ip string) string {
 }
 func BuildFuncKey(id uint64) string {
 	return fmt.Sprintf("%s%s%d", BASEKEY, FUNC_STRING, id)
+}
+
+func BuildForgetKey(email string) string {
+	return fmt.Sprintf("%s%s%s", BASEKEY, FORGET, email)
 }

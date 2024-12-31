@@ -33,7 +33,10 @@ func AddRouter(r *gin.Engine, svc *svc.ServiceContext) *gin.Engine {
 			userhandler.SendCodeHandler(c, svc)
 		})
 		v2.POST("/login/code", func(c *gin.Context) {
-			userhandler.LoginByCoderHandler(c, svc)
+			userhandler.LoginByCodeHandler(c, svc)
+		})
+		v2.GET("/get/url", func(c *gin.Context) {
+			userhandler.GetUpdatePasswordUrlHandler(c, svc)
 		})
 	}
 
