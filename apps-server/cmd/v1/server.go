@@ -9,7 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ServerStart(svc *svc.ServiceContext) {
+func ServerStart() {
+	svc := svc.NewServerContext()
 	r := gin.Default()
 	// 使用 CORS 中间件
 	r.Use(cors.New(cors.Config{
