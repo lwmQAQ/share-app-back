@@ -1,0 +1,18 @@
+server:
+  host: 127.0.0.1
+  port: 8081
+
+
+
+minio:
+  endpoint: 121.37.228.161:9000
+  accessKeyID: 6t9XgA7VkE0va0xCvZmj
+  secretAccessKey: Zl5wiCQNR179Hzq5zFwMz2fYxMpGpSdmKbmwLkvw
+
+
+mysql:
+  host: 192.168.31.27
+  port: 3306
+  dbName: ResourceShare
+  user: root
+  password: "lwm"

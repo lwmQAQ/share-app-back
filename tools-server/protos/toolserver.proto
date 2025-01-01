@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tool;
+option go_package = "internal/rpcclient/toolservice;toolservice"; 
+
+service ToolService {
+  rpc Translation (TranslationRequest) returns (TranslationReply) {}
+}
+
+
+message TranslationRequest {
+  string DownloadUrl= 1;
+}
+
+
+message TranslationReply {
+  string MonoUrl = 1;
+  string DualUrl = 2;
+}

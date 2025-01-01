@@ -1,0 +1,6 @@
+{"level":"error","msg":"无法插入任务 原因为:Error 1054 (42S22): Unknown column 'file_name' in 'field list'","time":"2024-12-28T11:08:44+08:00"}
+{"level":"error","msg":"获取rpc服务失败: no available services for ToolServer","time":"2024-12-28T11:27:35+08:00"}
+{"level":"error","msg":"rpc服务出错 rpc error: code = Unknown desc = Exception calling application: _Context.abort() missing 1 required positional argument: 'details'","time":"2024-12-28T12:13:05+08:00"}
+{"level":"error","msg":"rpc服务出错 rpc error: code = Unknown desc = Exception calling application: _Context.abort() missing 1 required positional argument: 'details'","time":"2024-12-28T12:15:59+08:00"}
+{"level":"error","msg":"rpc服务出错 rpc error: code = Unknown desc = Exception calling application: _Context.abort() missing 1 required positional argument: 'details'","time":"2024-12-28T12:16:54+08:00"}
+{"level":"error","msg":"rpc服务出错 rpc error: code = Unknown desc = Exception calling application: _Context.abort() missing 1 required positional argument: 'details'","time":"2024-12-28T12:19:17+08:00"}

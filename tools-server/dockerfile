@@ -1,0 +1,14 @@
+# 使用最小的基础镜像
+FROM alpine:latest
+
+# 安装 ca-certificates 以支持 HTTPS 请求（如果需要）
+RUN apk --no-cache add ca-certificates
+
+# 将本地的二进制文件复制到镜像中
+COPY myapp /usr/local/bin/myapp
+
+# 设置容器启动时运行的命令
+CMD ["/usr/local/bin/myapp"]
+
+# 如果需要暴露端口，可以使用 EXPOSE 指令
+EXPOSE 8081
